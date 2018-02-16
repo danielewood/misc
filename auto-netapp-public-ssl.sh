@@ -12,30 +12,30 @@ OUT_FILE="$CERT_CN.txt"
 
 echo "set -privilege admin
 set -privilege advanced
-y
+yes
 security certificate show
 security ssl show -vserver $VSERVER
 security certificate delete -vserver $VSERVER *
-y
+yes
 security certificate install -type server
 # Certificate
 # cat $CERT_CER" > $OUT_FILE
 cat $CERT_CER >> $OUT_FILE
 
 echo "
-y
+yes
 # Private Key
 # cat $CERT_KEY">>$OUT_FILE
 cat $CERT_KEY>>$OUT_FILE
 
 echo "
-y
+yes
 # Intermediate CA Certificate
 # cat $CERT_INTCA">>$OUT_FILE
 cat $CERT_INTCA>>$OUT_FILE
 
 echo "
-y
+yes
 # Root CA Certificate
 # For Fake LE RootCA:
 # openssl x509 -in $CERT_INTCA -noout -text | grep 'CA Issuers - URI:' | awk -F'URI:' '{print \$2}' | xargs -i curl -L {} | openssl x509 -inform der
@@ -46,11 +46,10 @@ openssl x509 -in $CERT_INTCA -noout -text | grep 'CA Issuers - URI:' | awk -F'UR
 openssl x509 -in $CERT_INTCA -noout -text | grep 'CA Issuers - URI:' | awk -F'URI:' '{print $2}' | xargs -i curl -L {} | openssl x509 -inform der | grep 'BEGIN CERTIFICATE' -A999 --color=NEVER 1>>$OUT_FILE
 
 
-echo "n
+echo "no
 security ssl modify -vserver $VSERVER -server-enabled true -ca \"$CERT_CA_CN\" -serial $CERT_SERIAL
-security ssl show -vserver NTPCLST02
-security certificate show
+security ssl show -vserver $VSERVER
+security certificate show -vserver $VSERVER
 set -privilege admin
 exit
-
 " >>$OUT_FILE
