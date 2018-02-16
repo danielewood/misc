@@ -8,7 +8,7 @@ CERT_KEY="/root/.acme.sh/$CERT_CN/$CERT_CN.key"
 CERT_INTCA="/root/.acme.sh/$CERT_CN/ca.cer"
 CERT_CA_CN=`cat $CERT_CER | openssl x509 -noout -text | grep "Issuer: " | awk -F'CN=' '{print $2}'`
 CERT_SERIAL=`cat $CERT_CER | openssl x509 -noout -text | grep "Serial Number:" -A1 | tr -d " \t\n\r\:" | awk -F'SerialNumber' '{print $2}' | tr '[:lower:]' '[:upper:]'`
-OUT_FILE="out.file"
+OUT_FILE="$CERT_CN.txt"
 
 echo "set -privilege admin
 set -privilege advanced
