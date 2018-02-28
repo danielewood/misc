@@ -4,8 +4,8 @@
 
 
 - Upgrade AIX 4.1.5 to 4.3.3.
-- http://web-docs.gsi.de/~kraemer/COLLECTION/AIX/scratch43.html
-- http://web-docs.gsi.de/~kraemer/COLLECTION/AIX/install.html
+    - http://web-docs.gsi.de/~kraemer/COLLECTION/AIX/scratch43.html
+    - http://web-docs.gsi.de/~kraemer/COLLECTION/AIX/install.html
 
 
 - Migrate system disk using LVM: https://www.unix.com/302344307-post4.html
