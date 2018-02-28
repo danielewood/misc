@@ -12,7 +12,9 @@ Solaris OpenBoot Commands ([Reference](http://irtfweb.ifa.hawaii.edu/~spex/compu
   + rescan all disks, attempt to boot one of them automatically
   + use when you have swapped around disk configuration and now need to have the system auto-pick a boot device
 - `{ok} printenv`
-  + display current variables and current default values
+  + display Open Boot variables and current/default values
+- `{ok} setenv auto-boot? false`
+  + do not automatically boot from `boot-device`, operator must type boot
 - `{ok} printenv auto-boot?`
   + if true, boot from devices listed in `printenv boot-device`
   + there can be multiple devices in `boot-device`:
