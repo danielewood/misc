@@ -4,7 +4,7 @@ Rear 68pin port with SCSI2SD on SCSI ID 6 (cdrom)
 boot /pci@8,700000/scsi@6,1/disk@6,0:f
 
 Rear 68pin port with SCSI2SD on SCSI ID 1 (hdd)
-ok boot /pci@8,700000/scsi@6,1/disk@1,0:f
+boot /pci@8,700000/scsi@6,1/disk@1,0:f
 
 Internal 50pin port with SCSI2SD on SCSI ID 6 (cdrom)
 boot /pci@8,700000/scsi@6,0/disk@6,0:f
