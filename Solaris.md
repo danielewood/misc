@@ -1,25 +1,28 @@
 Sun Blade 2000:
+```
 Rear 68pin port with SCSI2SD on SCSI ID 6 (cdrom)
 boot /pci@8,700000/scsi@6,1/disk@6,0:f
 
 Internal 50pin port with SCSI2SD on SCSI ID 6 (cdrom)
 boot /pci@8,700000/scsi@6,0/disk@6,0:f
-
+```
 
 
 SunFire V210/V240:
+```
 Jumpers
 JP4 1-2     = 1.00GHz CPU
 JP4 1-2,3-4 = 1.28GHz CPU
 J5  1-2 Alom/System Control off, (will get you to openboot ok prompt)
 J13 1-2 Obp normal, 2-3 Halfboot
 J11 1-2 Write protect OBP
-
+```
 
 Misc Solaris Shell commands:
+```
 du -skd * | sort -rn | more
 find / -mount -ls | nawk '{size+=$1};END{print size / 1024 / 1024, $2}'
-
+```
 
 Solaris 8, fix locale issues:
 ```cat <<EOF > /etc/default/init
