@@ -1,7 +1,31 @@
 Solaris OpenBoot Commands ([Reference](http://irtfweb.ifa.hawaii.edu/~spex/computers/spex1/techdocs/1201-hilodog/SunOBP_Quick_Ref.pdf)):
 
-- show-disks
-- - adds selected disk to myalias, so you can the do `boot myalias`
+- `{ok} show-disks`
+  + adds selected disk to myalias, so you can then do `{ok} boot myalias`
+- `{ok} devalias`
+  + shows system device aliases, such as default `disk`, `disk1`, `cdrom`, etc
+- `{ok} probe-scsi`
+  + probes main SCSI bus (only FC-AL on the Sun Blade 2000)
+- `{ok} probe-scsi-all`
+  + probes entire SCSI bus, including all secondary busses.
+- `{ok} boot -rv`
+  + rescan all disks, attempt to boot one of them automatically
+  + use when you have swapped around disk configuration and now need to have the system auto-pick a boot device
+- `{ok} printenv`
+  + display current variables and current default values
+- `{ok} printenv auto-boot?`
+  + if true, boot from devices listed in `printenv boot-device`
+  + there can be multiple devices in bood-device:
+    - printenv boot-device
+    - boot-device =         /pci@8,700000/scsi@6/disk@3,0:a /pci@8,700000/scsi@6/disk@1,0:a /pci@8,600000/SUNW,qlc@4/fp@0,0/disk@w21000014c3e53951,0:a /pci@8,600000/SUNW,qlc@4/fp@0,0/disk@w21000004cf2c3830,0:a
+
+
+- `{ok} boot -rv`
+  + rescan all disks, attempt to boot one of them automatically
+  
+  
+  
+
 
 
 Sun Blade 2000:
