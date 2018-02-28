@@ -56,6 +56,7 @@ EOF
 - [ ] this is an incomplete item
 
 Solaris Patch Clusters - ftp://mirrors.rcs.alaska.edu/MIRRORS/retired/sun-patches/clusters/
+
 How to use Solaris Patch Clusters - http://www.idevelopment.info/data/Unix/Solaris/SOLARIS_Patching_Solaris_2.8.shtml
 
 
