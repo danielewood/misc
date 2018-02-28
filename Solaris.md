@@ -25,7 +25,8 @@ find / -mount -ls | nawk '{size+=$1};END{print size / 1024 / 1024, $2}'
 ```
 
 Solaris 8, fix locale issues:
-```cat <<EOF > /etc/default/init
+```
+cat <<EOF > /etc/default/init
 # @(#)init.dfl 1.5 99/05/26
 #
 # This file is /etc/default/init.  /etc/TIMEZONE is a symlink to this file.
