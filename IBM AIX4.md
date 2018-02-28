@@ -11,7 +11,7 @@
 - Migrate system disk using LVM: https://www.unix.com/302344307-post4.html
 - Network reconfig: https://www.unix.com/aix/274635-lost-ethernet.html
 
--x11vnc
+- x11vnc
     - ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/ezinstall/
     - http://stromberg.dnsalias.org/~strombrg/Useful-AIX-commands.html
     - https://web.archive.org/web/20000226000833/http://www.idsi.net/~bshma/chuck/vnc.html
