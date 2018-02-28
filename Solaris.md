@@ -1,3 +1,9 @@
+Solaris OpenBoot Commands ([Reference](http://irtfweb.ifa.hawaii.edu/~spex/computers/spex1/techdocs/1201-hilodog/SunOBP_Quick_Ref.pdf)):
+
+- show-disks
+- - adds selected disk to myalias, so you can the do `boot myalias`
+
+
 Sun Blade 2000:
 ```
 Rear 68pin port with SCSI2SD on SCSI ID 6 (cdrom)
@@ -55,6 +61,7 @@ LANG=C
 
 EOF
 ```
+
 
 Solaris Links:
 - Solaris Patch Clusters - `ftp://mirrors.rcs.alaska.edu/MIRRORS/retired/sun-patches/clusters/`
