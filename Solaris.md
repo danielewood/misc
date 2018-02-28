@@ -18,13 +18,7 @@ Solaris OpenBoot Commands ([Reference](http://irtfweb.ifa.hawaii.edu/~spex/compu
   + there can be multiple devices in `boot-device`:
    - `boot-device =         /pci@8,700000/scsi@6/disk@3,0:a /pci@8,700000/scsi@6/disk@1,0:a /pci@8,600000/SUNW,qlc@4/fp@0,0/disk@w21000014c3e53951,0:a /pci@8,600000/SUNW,qlc@4/fp@0,0/disk@w21000004cf2c3830,0:a`
 
-- `{ok} boot -rv`
-  + rescan all disks, attempt to boot one of them automatically
-  
-  
-  
-
-
+-------------------
 
 Sun Blade 2000:
 ```
