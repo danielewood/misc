@@ -56,13 +56,22 @@ LANG=C
 EOF
 ```
 
+Solaris Links:
+- Solaris Patch Clusters - `ftp://mirrors.rcs.alaska.edu/MIRRORS/retired/sun-patches/clusters/`
+- [How to use Solaris Patch Clusters(idevelopment.info)](http://www.idevelopment.info/data/Unix/Solaris/SOLARIS_Patching_Solaris_2.8.shtml)
+- [How to use Solaris Patch Clusters(i-justblog.com)](http://www.i-justblog.com/2009/02/solaris-recommended-patch-clusters.html)
+
+
+Solaris Live Upgrade: (Only complete first portion to move OS to a new drive and repartition)
+- [Known, but underused Solaris Features: Live Upgrade](http://www.c0t0d0s0.org/archives/4102-Known,-but-underused-Solaris-Features-Live-Upgrade.html)
+- [Activating a Boot Environment (Solaris 9 Installation Guide)](https://docs.oracle.com/cd/E19683-01/816-7171/6md6pohs3/index.html)
+- [Example of Upgrading With Solaris Live Upgrade - Oracle Solaris 10 9/10 Installation Guide: Solaris Live Upgrade and Upgrade Planning](https://docs.oracle.com/cd/E18752_01/html/821-1910/luexample-100.html)
+- [Copy a Solaris Boot Drive to a New Disk](http://spiralbound.net/blog/2005/05/10/how-to-copy-a-solaris-boot-drive-to-a-disk-with-a-different-partition-layout/)
+
+
+
+
 - [x] @mentions, #refs, [links](), **formatting**, and <del>tags</del> supported
 - [x] list syntax required (any unordered or ordered list supported)
 - [x] this is a complete item
 - [ ] this is an incomplete item
-
-- Solaris Patch Clusters - ftp://mirrors.rcs.alaska.edu/MIRRORS/retired/sun-patches/clusters/
-- How to use Solaris Patch Clusters - http://www.idevelopment.info/data/Unix/Solaris/SOLARIS_Patching_Solaris_2.8.shtml
-- How to use Solaris Patch Clusters - http://www.i-justblog.com/2009/02/solaris-recommended-patch-clusters.html
-
-
