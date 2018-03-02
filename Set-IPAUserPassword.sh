@@ -75,7 +75,7 @@ fi
 printf '%-59s' "Checking $IPA_SRV1 time sync:"
 IPA_SRV1_OFFSET=999999
 IPA_SRV1_OFFSET=`ntpdate -q $TIMESERVER 2> /dev/null | grep 'time server' | awk -F'offset ' '{print $2}' |  grep -E -o '[0-9]+\.[0-9]+' | awk -F'.' '{print $1}'`
-if [ $IPA_SRV1_OFFSET -gt 5 ]; then
+if [ $IPA_SRV1_OFFSET -lt 5 ]; then
   echo "$OK_BOX"
 else
   echo "$FAIL_BOX"
@@ -97,7 +97,7 @@ fi
 printf '%-59s' "Checking $IPA_SRV2 time sync:"
 IPA_SRV2_OFFSET=999999
 IPA_SRV2_OFFSET=`ntpdate -q $ipa_srv2.$IPA_DOMAIN 2> /dev/null | grep 'time server' | awk -F'offset ' '{print $2}' |  grep -E -o '[0-9]+\.[0-9]+' | awk -F'.' '{print $1}'`
-if [ $IPA_SRV2_OFFSET -gt 5 ]; then
+if [ $IPA_SRV2_OFFSET -lt 5 ]; then
   echo "$OK_BOX"
 else
   echo "$FAIL_BOX"
@@ -115,7 +115,7 @@ fi
 printf '%-59s' "Checking $IPA_SRV3 time sync:"
 IPA_SRV3_OFFSET=999999
 IPA_SRV3_OFFSET=`ntpdate -q $ipa_srv3.$IPA_DOMAIN 2> /dev/null | grep 'time server' | awk -F'offset ' '{print $2}' |  grep -E -o '[0-9]+\.[0-9]+' | awk -F'.' '{print $1}'`
-if [ $IPA_SRV3_OFFSET -gt 5 ]; then
+if [ $IPA_SRV3_OFFSET -lt 5 ]; then
   echo "$OK_BOX"
 else
   echo "$FAIL_BOX"
@@ -139,8 +139,6 @@ echo $DIR_MNGR_PASS | kinit admin &> /dev/null
 #ipa pwpolicy-show --user=$TARGET_USER
 #ipa user-show $TARGET_USER
 #ipa user-status $TARGET_USER
-
-EXPDATE="20371231`date -u +%H%M%S`Z"
 
 echo "Resetting ${green}$TARGET_USER${reset}'s password to '${green}$TARGET_USER_PASSWORD${reset}'"
 SANITIZE=`echo $TARGET_USER_PASSWORD | ipa user-mod $TARGET_USER --password`
@@ -193,8 +191,10 @@ echo "---------------------"
 #######################################################################################
 ### Create .ldif and submit to $IPA_SRV1 to change password expiration date to 2037 ###
 #######################################################################################
+# Set new expiration date for account
+EXPDATE="20371231`date -u +%H%M%S`Z"
 
-cat > ./krbpasswordreset.ldif <<DELIM
+cat > /tmp/krbpasswordreset.ldif <<DELIM
 dn: uid=$TARGET_USER,$IPA_BASE_DN
 changetype: modify
 replace: krbpasswordexpiration
@@ -204,10 +204,10 @@ DELIM
 
 printf '%-59s' "Setting New Kerberos Password Expiration on $IPA_SRV1:"
 echo ""
-SANITIZE=`ldapmodify -x -D "cn=directory manager" -vv -f krbpasswordreset.ldif -w $DIR_MNGR_PASS -h $ipa_srv1.$IPA_DOMAIN 2> /dev/null`
+SANITIZE=`ldapmodify -x -D "cn=directory manager" -vv -f /tmp/krbpasswordreset.ldif -w $DIR_MNGR_PASS -h $ipa_srv1.$IPA_DOMAIN 2> /dev/null`
 sanitize_for_publication "$SANITIZE"
 
-rm -f ./krbpasswordreset.ldif
+rm -f /tmp/krbpasswordreset.ldif
 
 #ldapsearch -Y GSSAPI -b "$IPA_BASE_DN" | grep "uid\=$TARGET_USER" -A90 | sed -n '/#/q;p'
 
@@ -266,7 +266,7 @@ echo "---------------------"
 
 echo -n "Syncing IPA (LDAP) Servers."
 x=60
-while [ $x -gt 40 ]; do
+while [ $x -gt 30 ]; do
   echo -n "."
   sleep 0.2s
   KRB_EXP_IPA_SRV1=`ldapsearch -Y GSSAPI -b "uid=$TARGET_USER,$IPA_BASE_DN" -w $DIR_MNGR_PASS -h $ipa_srv1.$IPA_DOMAIN krbPasswordExpiration 2> /dev/null | grep 'krbPasswordExpiration\:' | awk -F'krbPasswordExpiration: ' '{print $2}'`
@@ -304,4 +304,3 @@ EXPDATE=$KRB_EXP_IPA_SRV1
 printf '%21s' "$IPA_SRV2 Expiration: "; if [ "$KRB_EXP_IPA_SRV2" = "$EXPDATE" ]; then echo -n "${green}$KRB_EXP_IPA_SRV2${reset}"; printf '%42s\n' "$OK_BOX"; else echo -n "${red}$KRB_EXP_IPA_SRV2${reset}"; printf '%42s\n' "$FAIL_BOX"; fi
 printf '%21s' "$IPA_SRV3 Expiration: "; if [ "$KRB_EXP_IPA_SRV3" = "$EXPDATE" ]; then echo -n "${green}$KRB_EXP_IPA_SRV3${reset}"; printf '%42s\n' "$OK_BOX"; else echo -n "${red}$KRB_EXP_IPA_SRV3${reset}"; printf '%42s\n' "$FAIL_BOX"; fi
 echo "---------------------"
-
