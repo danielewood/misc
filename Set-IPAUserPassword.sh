@@ -1,4 +1,13 @@
 #!/bin/bash
+# This script will:
+# - enforce NTP time sync between IPA servers
+# - reset a user's password
+# - allow immediate use of network shares without user having to change their password again
+# - reset their password expiration to 2037
+# - verify NIS and IPA password replication between all three directory servers
+
+
+
 IPA_DOMAIN='contoso.com'
 NIS_DOMAIN='contoso.com'
 IPA_SRV1='IPA1'
