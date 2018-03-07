@@ -20,6 +20,27 @@ Solaris OpenBoot Commands ([Reference](http://irtfweb.ifa.hawaii.edu/~spex/compu
   + there can be multiple devices in `boot-device`:
    - `boot-device =         /pci@8,700000/scsi@6/disk@3,0:a /pci@8,700000/scsi@6/disk@1,0:a /pci@8,600000/SUNW,qlc@4/fp@0,0/disk@w21000014c3e53951,0:a /pci@8,600000/SUNW,qlc@4/fp@0,0/disk@w21000004cf2c3830,0:a`
 
+- `{0} ok devalias`
+
+```
+screen                   /pci@8,700000/SUNW,m64B@1
+disk1                    /pci@8,600000/SUNW,qlc@4/fp@0,0/disk@2,0
+disk0                    /pci@8,600000/SUNW,qlc@4/fp@0,0/disk@1,0
+disk                     /pci@8,600000/SUNW,qlc@4/fp@0,0/disk@1,0
+scsi                     /pci@8,600000/SUNW,qlc@4
+net                      /pci@8,700000/network@5,1:
+cdrom                    /pci@8,700000/scsi@6/disk@6,0:f
+tape                     /pci@8,700000/scsi@6,1/tape@4,0
+tape1                    /pci@8,700000/scsi@6,1/tape@5,0
+tape0                    /pci@8,700000/scsi@6,1/tape@4,0
+beep                     /pci@8,700000/ebus@5/beep@1,32
+floppy                   /pci@8,700000/ebus@5/floppy
+ttyb                     /pci@8,700000/ebus@5/serial@1,400000:b
+ttya                     /pci@8,700000/ebus@5/serial@1,400000:a
+name                     aliases
+```
+
+
 -------------------
 
 Sun Blade 2000:
