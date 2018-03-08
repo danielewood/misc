@@ -3,6 +3,8 @@
 KEYSTORE_PASS='P@ssW0rd!'
 ALIAS_FRIENDLYNAME="Contoso-Code-Sign-`date +%Y%m%d`"
 DISTINGUISHED_NAME='CN=Contoso Corporation,O=Contoso Corporation,L=San Francisco,ST=California,C=US'
+PATH_TO_JARS='/data/jarfiles/'
+JARFILES=`find $PATH_TO_JARS -name *.jar`
 ```
 
 ### File Names (where ALIAS_FRIENDLYNAME='Contoso-Code-Sign-YYYYMMDD')
@@ -59,4 +61,26 @@ keytool -importkeystore -srcalias $ALIAS_FRIENDLYNAME -srckeystore "$ALIAS_FRIEN
 	-srcstorepass "$KEYSTORE_PASS" -deststorepass "$KEYSTORE_PASS" -destkeypass "$KEYSTORE_PASS"
 ```
 
+### Verify JAR Files
+```
+JARFILES=`find $PATH_TO_JARS -name *.jar`
+for JARFILE in $JARFILES; do
+    echo $JARFILE
+	echo "-----"
+    jarsigner -verify -verbose "$JARFILE"
+	echo "-----"
+done
+```
 
+
+
+### Sign JAR Files
+```
+for JARFILE in $JARFILES; do
+    echo $JARFILE; echo "-----"
+    jarsigner -tsa 'http://timestamp.digicert.com' -verbose \
+        -keystore "$ALIAS_FRIENDLYNAME"-keystore.jks \
+		-keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS" \
+		"$JARFILE" "$ALIAS_FRIENDLYNAME"
+done
+```
