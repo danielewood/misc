@@ -58,3 +58,5 @@ keytool -importkeystore -srcalias $ALIAS_FRIENDLYNAME -srckeystore "$ALIAS_FRIEN
         -destkeystore "$ALIAS_FRIENDLYNAME"-keystore.p12 -deststoretype PKCS12 \
 	-srcstorepass "$KEYSTORE_PASS" -deststorepass "$KEYSTORE_PASS" -destkeypass "$KEYSTORE_PASS"
 ```
+
+
