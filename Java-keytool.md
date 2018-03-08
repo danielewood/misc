@@ -23,9 +23,11 @@ keytool -certreq -alias "$ALIAS_FRIENDLYNAME" -file "$ALIAS_FRIENDLYNAME"-keysto
 #create keystore:
 keytool -genkey -alias "$ALIAS_FRIENDLYNAME" -keystore "$ALIAS_FRIENDLYNAME"-keystore.jks \
         -keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS" -dname "$DISTINGUISHED_NAME"
+	
 #remove the privatekey:
 keytool -delete -alias "$ALIAS_FRIENDLYNAME" -keystore "$ALIAS_FRIENDLYNAME"-keystore.jks \
         -keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS" -dname "$DISTINGUISHED_NAME"
+	
 #import private key and chain from PFX
 keytool -v -importkeystore -srckeystore "$ALIAS_FRIENDLYNAME"-keystore.pfx -srcstoretype PKCS12 \
         -destkeystore "$ALIAS_FRIENDLYNAME"-keystore.jks -deststoretype JKS \
