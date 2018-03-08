@@ -1,18 +1,18 @@
 ### Common Variables
 ```
 KEYSTORE_PASS='P@ssW0rd!'
-ALIAS_FRIENDLYNAME='Contoso-Code-Sign-DATE'
+ALIAS_FRIENDLYNAME="Contoso-Code-Sign-`date +%Y%m%d`"
 DISTINGUISHED_NAME='CN=Contoso Corporation,O=Contoso Corporation,L=San Francisco,ST=California,C=US'
 ```
 
-### File Names (where ALIAS_FRIENDLYNAME='Contoso-Code-Sign-DATE')
+### File Names (where ALIAS_FRIENDLYNAME='Contoso-Code-Sign-YYYYMMDD')
 ```
 Microsoft Authenticode PFX Storage Format:
-Contoso-Code-Sign-DATE-keystore.pks
+Contoso-Code-Sign-YYYYMMDD-keystore.pks
 Oracle/Sun Java Keystore Format:
-Contoso-Code-Sign-DATE-keystore.jks
+Contoso-Code-Sign-YYYYMMDD-keystore.jks
 Certificate Signing Request:
-Contoso-Code-Sign-DATE-keystore.csr
+Contoso-Code-Sign-YYYYMMDD-keystore.csr
 ```
 
 ### Generate keystore
