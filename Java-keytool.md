@@ -63,7 +63,6 @@ keytool -importkeystore -srcalias $ALIAS_NAME -srckeystore "$ALIAS_NAME"-keystor
 
 #### ##Verify JAR Files
 ```
-JARFILES=`find $PATH_TO_JARS -name *.jar`
 for JARFILE in $JARFILES; do
   echo $JARFILE
   echo "====="
