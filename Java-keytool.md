@@ -9,8 +9,10 @@ DISTINGUISHED_NAME='CN=Contoso Corporation,O=Contoso Corporation,L=San Francisco
 ```
 Microsoft Authenticode PFX Storage Format:
 Contoso-Code-Sign-YYYYMMDD-keystore.pks
+
 Oracle/Sun Java Keystore Format:
 Contoso-Code-Sign-YYYYMMDD-keystore.jks
+
 Certificate Signing Request:
 Contoso-Code-Sign-YYYYMMDD-keystore.csr
 ```
