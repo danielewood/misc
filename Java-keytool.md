@@ -6,7 +6,7 @@ DISTINGUISHED_NAME='CN=Contoso Corporation,O=Contoso Corporation,L=San Francisco
 ```
 
 ### File Names
-## (where ALIAS_FRIENDLYNAME='Contoso-Code-Sign-DATE')
+#### (where ALIAS_FRIENDLYNAME='Contoso-Code-Sign-DATE')
 ```
 Microsoft Authenticode PFX Storage Format:
 Contoso-Code-Sign-DATE-keystore.pks
