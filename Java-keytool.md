@@ -66,13 +66,11 @@ keytool -importkeystore -srcalias $ALIAS_FRIENDLYNAME -srckeystore "$ALIAS_FRIEN
 JARFILES=`find $PATH_TO_JARS -name *.jar`
 for JARFILE in $JARFILES; do
     echo $JARFILE
-	echo "-----"
+    echo "-----"
     jarsigner -verify -verbose "$JARFILE"
-	echo "-----"
+    echo "-----"
 done
 ```
-
-
 
 ### Sign JAR Files
 ```
@@ -80,7 +78,7 @@ for JARFILE in $JARFILES; do
     echo $JARFILE; echo "-----"
     jarsigner -tsa 'http://timestamp.digicert.com' -verbose \
         -keystore "$ALIAS_FRIENDLYNAME"-keystore.jks \
-		-keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS" \
-		"$JARFILE" "$ALIAS_FRIENDLYNAME"
+        -keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS" \
+        "$JARFILE" "$ALIAS_FRIENDLYNAME"
 done
 ```
