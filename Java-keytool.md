@@ -1,3 +1,6 @@
+
+
+
 #### ##Common Variables
 ```
 KEYSTORE_PASS='P@ssW0rd!'
@@ -45,13 +48,12 @@ keytool -delete -alias "$ALIAS_NAME" -keystore "$ALIAS_NAME"-keystore.jks \
 
 #### ##Convert PFX to JKS (without source CSR, uses private key in PFX)
 ```
-##import private key and chain from PFX
 # get alias from PFX
 SRCALIAS=`keytool -list -v -keystore "$ALIAS_NAME"-keystore.pfx \
     -keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS" -storetype PKCS12 |
     grep 'Alias name: ' | awk -F'Alias name: ' '{print $2}'`
-
-# import to (new or existing) keystore
+	
+# Import private key and chain from PFX into (new or existing) keystore
 keytool -v -importkeystore -srcalias $SRCALIAS -destalias $ALIAS_NAME \
     -srckeystore "$ALIAS_NAME"-keystore.pfx -srcstoretype PKCS12 \
     -destkeystore "$ALIAS_NAME"-keystore.jks -deststoretype JKS \
