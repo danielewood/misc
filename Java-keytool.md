@@ -4,9 +4,13 @@
 #### ##Common Variables
 ```
 KEYSTORE_PASS='P@ssW0rd!'
+
 ALIAS_NAME="Contoso-Code-Sign-`date +%Y%m%d`"
+
 DISTINGUISHED_NAME='CN=Contoso Corporation,O=Contoso Corporation,L=San Francisco,ST=California,C=US'
+
 PATH_TO_JARS='/data/jarfiles/'
+
 JARFILES=`find $PATH_TO_JARS -name *.jar`
 ```
 
