@@ -32,7 +32,7 @@ keytool -certreq -alias "$ALIAS_NAME" -file "$ALIAS_NAME"-keystore.csr \
     -keystore "$ALIAS_NAME"-keystore.jks -storepass "$KEYSTORE_PASS"
 ```
 
-#### ##Convert PFX to JKS (without source CSR, uses private key in PFX)
+#### ## Create Empty Keystore
 ```
 #create keystore:
 keytool -genkey -alias "$ALIAS_NAME" -keystore "$ALIAS_NAME"-keystore.jks \
@@ -41,9 +41,16 @@ keytool -genkey -alias "$ALIAS_NAME" -keystore "$ALIAS_NAME"-keystore.jks \
 #remove the privatekey:
 keytool -delete -alias "$ALIAS_NAME" -keystore "$ALIAS_NAME"-keystore.jks \
     -keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS" -dname "$DISTINGUISHED_NAME"
-  
-#import private key and chain from PFX
-keytool -v -importkeystore -srckeystore "$ALIAS_NAME"-keystore.pfx -srcstoretype PKCS12 \
+```
+
+#### ##Convert PFX to JKS (without source CSR, uses private key in PFX)
+```
+##import private key and chain from PFX
+# get alias from PFX
+SRCALIAS=`keytool -list -v -keystore "$ALIAS_NAME"-keystore.pfx -keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS" -storetype PKCS12 | grep 'Alias name: ' | awk -F'Alias name: ' '{print $2}'`
+# import to (new or existing) keystore
+keytool -v -importkeystore -srcalias $SRCALIAS -destalias $ALIAS_NAME \
+    -srckeystore "$ALIAS_NAME"-keystore.pfx -srcstoretype PKCS12 \
     -destkeystore "$ALIAS_NAME"-keystore.jks -deststoretype JKS \
     -srcstorepass "$KEYSTORE_PASS" -deststorepass "$KEYSTORE_PASS"
 ```
