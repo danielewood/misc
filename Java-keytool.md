@@ -3,9 +3,10 @@
 
 #### ##Common Variables
 ```
-KEYSTORE_PASS='P@ssW0rd!'
-
+# Alias is the same thing as Friendly Name
 ALIAS_NAME="Contoso-Code-Sign-`date +%Y%m%d`"
+
+KEYSTORE_PASS='P@ssW0rd!'
 
 DISTINGUISHED_NAME='CN=Contoso Corporation,O=Contoso Corporation,L=San Francisco,ST=California,C=US'
 
@@ -39,6 +40,13 @@ keytool -certreq -alias "$ALIAS_NAME" -file "$ALIAS_NAME"-keystore.csr \
     -keystore "$ALIAS_NAME"-keystore.jks -storepass "$KEYSTORE_PASS"
 ```
 
+#### ##Import Public Certificate (P7B or CER) to match key from above CSR
+```
+keytool -import -alias "$ALIAS_NAME" -file "$ALIAS_NAME"-keystore.cer \
+    -keystore "$ALIAS_NAME"-keystore.jks -storepass "$KEYSTORE_PASS" \
+    -trustcacerts 
+```
+
 #### ## Create Empty Keystore
 ```
 #create keystore:
@@ -70,7 +78,7 @@ keytool -list -v -alias "$ALIAS_NAME" -keystore "$ALIAS_NAME"-keystore.jks \
     -keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS"
 ```
 
-#### ##Convert JKS to P12
+#### ##Convert JKS to P12/PFX (Same file format)
 ```
 keytool -importkeystore -srcalias $ALIAS_NAME -srckeystore "$ALIAS_NAME"-keystore.jks \
     -destkeystore "$ALIAS_NAME"-keystore.p12 -deststoretype PKCS12 \
