@@ -58,7 +58,7 @@ keytool -delete -alias "$ALIAS_NAME" -keystore "$ALIAS_NAME"-keystore.jks \
     -keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS" -dname "$DISTINGUISHED_NAME"
 ```
 
-#### ## Convert PFX to JKS (without source CSR, uses private key in PFX)
+#### ## Convert PKCS12 PFX/P12 to JKS (without source CSR, uses private key in PFX)
 ```
 # get alias from PFX
 SRCALIAS=`keytool -list -v -keystore "$ALIAS_NAME"-keystore.pfx \
