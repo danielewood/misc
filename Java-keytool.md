@@ -1,7 +1,7 @@
 
 
 
-#### ##Common Variables
+#### ## Common Variables
 ```
 # Alias is the same thing as Friendly Name
 ALIAS_NAME="Contoso-Code-Sign-`date +%Y%m%d`"
@@ -15,7 +15,7 @@ PATH_TO_JARS='/data/jarfiles/'
 JARFILES=`find $PATH_TO_JARS -name *.jar`
 ```
 
-#### ##File Names (where ALIAS_NAME='Contoso-Code-Sign-YYYYMMDD')
+#### ## File Names (where ALIAS_NAME='Contoso-Code-Sign-YYYYMMDD')
 ```
 Microsoft Authenticode PFX Storage Format:
 Contoso-Code-Sign-YYYYMMDD-keystore.pks
@@ -27,20 +27,20 @@ Certificate Signing Request:
 Contoso-Code-Sign-YYYYMMDD-keystore.csr
 ```
 
-#### ##Generate keystore
+#### ## Generate keystore
 ```
 keytool -genkey -alias "$ALIAS_NAME" -keystore "$ALIAS_NAME"-keystore.jks \
     -keypass "$KEYSTORE_PASS" -keyalg RSA -keysize 2048 \
     -storepass "$KEYSTORE_PASS" -dname "$DISTINGUISHED_NAME"
 ```
 
-#### ##Generate CSR
+#### ## Generate CSR
 ```
 keytool -certreq -alias "$ALIAS_NAME" -file "$ALIAS_NAME"-keystore.csr \
     -keystore "$ALIAS_NAME"-keystore.jks -storepass "$KEYSTORE_PASS"
 ```
 
-#### ##Import Public Certificate (P7B or CER) to match key from above CSR
+#### ## Import Public Certificate (P7B or CER) to match key from above CSR
 ```
 keytool -import -alias "$ALIAS_NAME" -file "$ALIAS_NAME"-keystore.cer \
     -keystore "$ALIAS_NAME"-keystore.jks -storepass "$KEYSTORE_PASS" \
@@ -58,7 +58,7 @@ keytool -delete -alias "$ALIAS_NAME" -keystore "$ALIAS_NAME"-keystore.jks \
     -keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS" -dname "$DISTINGUISHED_NAME"
 ```
 
-#### ##Convert PFX to JKS (without source CSR, uses private key in PFX)
+#### ## Convert PFX to JKS (without source CSR, uses private key in PFX)
 ```
 # get alias from PFX
 SRCALIAS=`keytool -list -v -keystore "$ALIAS_NAME"-keystore.pfx \
@@ -72,20 +72,20 @@ keytool -v -importkeystore -srcalias $SRCALIAS -destalias $ALIAS_NAME \
     -srcstorepass "$KEYSTORE_PASS" -deststorepass "$KEYSTORE_PASS"
 ```
 
-#### ##Show keys in keystore
+#### ## Show keys in keystore
 ```
 keytool -list -v -alias "$ALIAS_NAME" -keystore "$ALIAS_NAME"-keystore.jks \
     -keypass "$KEYSTORE_PASS" -storepass "$KEYSTORE_PASS"
 ```
 
-#### ##Convert JKS to P12/PFX (Same file format)
+#### ## Convert JKS to P12/PFX (Same file format)
 ```
 keytool -importkeystore -srcalias $ALIAS_NAME -srckeystore "$ALIAS_NAME"-keystore.jks \
     -destkeystore "$ALIAS_NAME"-keystore.p12 -deststoretype PKCS12 \
     -srcstorepass "$KEYSTORE_PASS" -deststorepass "$KEYSTORE_PASS" -destkeypass "$KEYSTORE_PASS"
 ```
 
-#### ##Verify JAR Files
+#### ## Verify JAR Files
 ```
 for JARFILE in $JARFILES; do
   echo $JARFILE
@@ -95,7 +95,7 @@ for JARFILE in $JARFILES; do
 done
 ```
 
-#### ##Sign JAR Files
+#### ## Sign JAR Files
 ```
 for JARFILE in $JARFILES; do
   echo $JARFILE
