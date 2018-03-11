@@ -40,7 +40,7 @@ keytool -certreq -alias "$ALIAS_NAME" -file "$ALIAS_NAME"-keystore.csr \
     -keystore "$ALIAS_NAME"-keystore.jks -storepass "$KEYSTORE_PASS"
 ```
 
-#### ## Import Public Certificate (P7B or CER) to match key from above CSR
+#### ## Import Public CA provided PKCS7 Chain (P7B/CER) from above CSR
 ```
 keytool -import -alias "$ALIAS_NAME" -file "$ALIAS_NAME"-keystore.cer \
     -keystore "$ALIAS_NAME"-keystore.jks -storepass "$KEYSTORE_PASS" \
