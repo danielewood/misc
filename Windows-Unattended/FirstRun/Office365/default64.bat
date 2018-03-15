@@ -1,0 +1,1 @@
+setup.exe /configure default64.xml
