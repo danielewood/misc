@@ -1,1 +1,0 @@
-setup.exe /configure shared.xml
