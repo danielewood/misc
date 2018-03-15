@@ -1,11 +1,12 @@
 #!/bin/bash
 # Takes Let's Encrypt SSL certificates and generates a script to paste in to your NetApp CLI to automatically install the certificate.
-# Paths assume you user acme.sh, adjust variables at top of file as needed.
+# Paths assume you use acme.sh, adjust variables at top of file as needed.
 VSERVER="NTPCLST02"
 CERT_CN="ntpclst02.ttl.one"
 CERT_CER="/root/.acme.sh/$CERT_CN/$CERT_CN.cer"
 CERT_KEY="/root/.acme.sh/$CERT_CN/$CERT_CN.key"
 CERT_INTCA="/root/.acme.sh/$CERT_CN/ca.cer"
+CERT_ROOTCA=""
 CERT_CA_CN=`cat $CERT_CER | openssl x509 -noout -text | grep "Issuer: " | awk -F'CN=' '{print $2}'`
 CERT_SERIAL=`cat $CERT_CER | openssl x509 -noout -text | grep "Serial Number:" -A1 | tr -d " \t\n\r\:" | awk -F'SerialNumber' '{print $2}' | tr '[:lower:]' '[:upper:]'`
 OUT_FILE="$CERT_CN.txt"
@@ -13,7 +14,7 @@ OUT_FILE="$CERT_CN.txt"
 echo "set -privilege admin
 set -privilege advanced
 yes
-security certificate show
+security certificate show -vserver $VSERVER
 security ssl show -vserver $VSERVER
 security certificate delete -vserver $VSERVER *
 yes
@@ -41,9 +42,13 @@ yes
 # openssl x509 -in $CERT_INTCA -noout -text | grep 'CA Issuers - URI:' | awk -F'URI:' '{print \$2}' | xargs -i curl -L {} | openssl x509 -inform der
 # For Production LE RootCA:
 # openssl x509 -in $CERT_INTCA -noout -text | grep 'CA Issuers - URI:' | awk -F'URI:' '{print \$2}' | xargs -i curl -L {} | openssl pkcs7 -inform der -print_certs" >>$OUT_FILE
-
-openssl x509 -in $CERT_INTCA -noout -text | grep 'CA Issuers - URI:' | awk -F'URI:' '{print $2}' | xargs -i curl -L {} | openssl pkcs7 -inform der -print_certs | grep 'BEGIN CERTIFICATE' -A999 --color=NEVER 1>>$OUT_FILE
-openssl x509 -in $CERT_INTCA -noout -text | grep 'CA Issuers - URI:' | awk -F'URI:' '{print $2}' | xargs -i curl -L {} | openssl x509 -inform der | grep 'BEGIN CERTIFICATE' -A999 --color=NEVER 1>>$OUT_FILE
+if [ -z "$CERT_ROOTCA" ]; then
+    openssl x509 -in $CERT_INTCA -noout -text | grep 'CA Issuers - URI:' | awk -F'URI:' '{print $2}' | xargs -i curl -L {} | openssl pkcs7 -inform der -print_certs | grep 'BEGIN CERTIFICATE' -A999 --color=NEVER 1>>$OUT_FILE
+    openssl x509 -in $CERT_INTCA -noout -text | grep 'CA Issuers - URI:' | awk -F'URI:' '{print $2}' | xargs -i curl -L {} | openssl x509 -inform der | grep 'BEGIN CERTIFICATE' -A999 --color=NEVER 1>>$OUT_FILE
+else
+    cat $CERT_ROOTCA>>$OUT_FILE
+    echo "">>$OUT_FILE
+fi
 
 
 echo "no
