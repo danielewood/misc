@@ -54,8 +54,8 @@ Function Add-DhcpServerv4ReservationbyIP {
         [switch] $Confirm
         )
     #Begin Script
-    
-    $LinkLayerAddress = (Get-NetNeighbor -IPAddress $IPAddress -ErrorAction Stop).LinkLayerAddress
+    Test-Connection -Destination "$IPAddress" -Count 1 -ErrorAction SilentlyContinue | Out-Null
+    $LinkLayerAddress = (Get-NetNeighbor -IPAddress "$IPAddress" -ErrorAction Stop).LinkLayerAddress
     Add-DhcpServerv4Reservation -ScopeId "$ScopeId" -IPAddress "$IPAddress" -ClientId "$LinkLayerAddress" -Description "$Description" -ComputerName "$DHCPServer" -Name "$Name" -WhatIf:$WhatIf -Confirm:$Confirm -Verbose
     Get-DhcpServerv4Reservation -ScopeId "$ScopeId" -ClientId "$LinkLayerAddress" -ComputerName "$DHCPServer"
 }
