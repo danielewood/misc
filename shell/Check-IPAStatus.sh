@@ -19,7 +19,7 @@
 #.VERSION
 # Version: 20180627
 
-# User Variables:
+# User Defined Variables:
 NIS_DOMAIN='mte.contoso.com'
 IPA_DOMAIN='mte.contoso.com'
 IPA_BASE_DN='cn=users,cn=accounts,dc=mte,dc=contoso,dc=com'
@@ -28,9 +28,6 @@ TARGET_USER='sgeadmin'
 # Begin Script
 list=`host -t srv _ldap._tcp.$IPA_DOMAIN`; returncode=$?
 list=`echo "$list" | awk -F' 389 ' '{print $2}'`
-#list=`echo "$list" | grep -E 'elis'` 
-#list=`echo "$list" | grep -E 'elis|aptos'` 
-list=`echo "$list" | grep -v -E '^ipa'` 
 if [[ $returncode != 0 ]]; then
     echo "{
    \"date\": \"`date +%s`\",    
@@ -52,33 +49,26 @@ while read -r line; do
     nis=`ypcat -d $NIS_DOMAIN -k passwd -h $server 2> /dev/null`; returncode=$?
     nis=`echo "$nis" | grep "$TARGET_USER $TARGET_USER" | awk -F':' '{print $2}'`
     if [[ $returncode = 0 ]]; then
-        #echo "$server: NIS UP"
         nisstatus='online'
     else
-        #echo "$server: NIS DN"
         nisstatus='offline'
     fi
 
     ldapsearch -x -h $server -b "uid=$TARGET_USER,$IPA_BASE_DN" &>1 /dev/null; returncode=$?
     if [[ $returncode = 0 ]]; then
-        #echo "$server: LDAP UP"
         ldapstatus='online'
     else
-        #echo "$server: LDAP DN"
         ldapstatus='offline'
     fi
     
     offset=`ntpdate -q $server 2>/dev/null`; returncode=$?
     offset=`echo "$offset" | grep stratum | awk -F', offset ' '{print $2}' | awk -F', delay ' '{print $1}'`
     if [[ $returncode = 0 ]]; then
-        #echo "$server: TIME UP"
         ntpstatus='online'
     else
-        #echo "$server: TIME DN"
         ntpstatus='offline'
     fi
-    #echo "$server: OFFSET ${offset#-}"
-    
+
 JSON+="
      \"$server\": [
         {\"service\": \"NIS\", \"status\": \"$nisstatus\"},
@@ -88,6 +78,7 @@ JSON+="
      ],"
 
 done <<< "$list"
+
 JSON=`echo "$JSON" | sed '$ s/,$//'`
 JSON+="
    }
