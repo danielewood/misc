@@ -11,7 +11,7 @@
 # Author: Daniel Wood / https://github.com/danielewood
 #
 # Needed packages for CentOS:
-# yum -y install ntpdate yp-tools openldap-clients
+# yum -y install ntpdate yp-tools openldap-clients bind-utils
 
 #.LINK
 # https://github.com/danielewood/misc/tree/master/shell
