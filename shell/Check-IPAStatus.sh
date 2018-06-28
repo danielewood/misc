@@ -4,10 +4,10 @@
 # Check-IPAStatus.sh polls FreeIPA servers on specified domain and generates a JSON format output.
 
 #.DESCRIPTION
-# Check-IPAStatus.sh generates JSON displaying current reachability status for NTP, LDAP, and NIS services.
+# Check-IPAStatus.sh generates JSON displaying current FreeIPA reachability status for NTP, LDAP, and NIS services.
 
 #.NOTES
-# License: Unlicense/CCZero/WTFPL/Public Domain
+# License: Unlicense / CCZero / WTFPL / Public Domain
 # Author: Daniel Wood / https://github.com/danielewood
 #
 # Needed packages for CentOS:
@@ -19,11 +19,34 @@
 #.VERSION
 # Version: 20180627
 
+#.EXAMPLE
+# user@host:~$ ./Check-IPAStatus.sh
+#{
+#   "date": "1530163266",
+#   "nis domain": "mte.contoso.com",
+#   "ipa domain": "contoso.com",
+#   "server": {
+#     "pegasi.mte.contoso.com": [
+#        {"service": "NIS", "status": "online"},
+#        {"service": "LDAP", "status": "online"},
+#        {"service": "NTP", "status": "online"},
+#        {"service": "NTP", "offset": "-0.000005"}
+#     ],
+#     "gamma.mte.contoso.com": [
+#        {"service": "NIS", "status": "online"},
+#        {"service": "LDAP", "status": "online"},
+#        {"service": "NTP", "status": "online"},
+#        {"service": "NTP", "offset": "-0.000368"}
+#     ]
+#   }
+#}
+
+
 # User Defined Variables:
 NIS_DOMAIN='mte.contoso.com'
-IPA_DOMAIN='mte.contoso.com'
+IPA_DOMAIN='contoso.com'
 IPA_BASE_DN='cn=users,cn=accounts,dc=mte,dc=contoso,dc=com'
-TARGET_USER='sgeadmin'
+TARGET_USER='sgeadmin' #Any valid username
 
 # Begin Script
 list=`host -t srv _ldap._tcp.$IPA_DOMAIN`; returncode=$?
