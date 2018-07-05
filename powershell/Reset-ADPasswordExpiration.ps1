@@ -43,7 +43,6 @@ Get-ADUser -Filter {samaccountname -like 'dwoo*'} | Reset-ADPasswordExpiration -
         foreach ($UserName in $Identity) {
             Write-Verbose $UserName
             $User = Get-ADUser -Identity "$UserName" -properties pwdlastset 
-            $OldUser = $User
             $ResetTime = [datetime]::FromFileTimeUTC($User.pwdlastset).AddDays($ResetExtensionDays).ToFileTimeUTC()
             $Oldpwdlastset = $User.pwdlastset
             if ($ResetTime -lt [datetime]::Now.ToFileTimeUTC()){
