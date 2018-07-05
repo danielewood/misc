@@ -28,7 +28,7 @@ Get-ADUser -Filter {samaccountname -like 'dwoo*'} | Reset-ADPasswordExpiration -
         [Parameter(
             Mandatory=$True,
             ValueFromPipeline=$True,
-            HelpMessage="SamAccopuntName or DistinguishedName")]
+            HelpMessage="SamAccountName or DistinguishedName")]
         [alias("SamAccountName","DistinguishedName")]
         [string[]] $Identity,
         
