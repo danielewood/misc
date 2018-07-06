@@ -5,22 +5,39 @@ Resets AD Password Expiration by changing date of pwdlastset to now.
     .DESCRIPTION
 Resets AD Password Expiration by changing date of pwdlastset to now.
     .NOTES
-Script by Daniel Wood (https://github.com/danielewood). Code is licened under Unlicense / CCZero / WTFPL / Public Domain.
+Script by Daniel Wood (https://github.com/danielewood).
+Code is licened under Unlicense / CCZero / WTFPL / Public Domain.
     .LINK
 https://github.com/danielewood/misc/tree/master/powershell
     .EXAMPLE
-Get-ADUser -Filter {samaccountname -like 'dwoo*'} | Reset-ADPasswordExpiration -Verbose
-VERBOSE: $Identity = CN=Daniel Wood,OU=Users,DC=contoso,DC=com
-VERBOSE: Changed pwdlastset from 131753201305111407 to Now
-VERBOSE: Changed pwdlastsetDate from 07/06/2018 03:08:50 to Now
+Reset-ADPasswordExpiration -SamAccountName dwood -Verbose
+VERBOSE: $Identity = dwood
+VERBOSE: Changed pwdlastset from 131615616553652266 to Now
+VERBOSE: Changed pwdlastsetDate from 1/27/2018 21:20:55 to Now
 
 
 DistinguishedName : CN=Daniel Wood,OU=Users,DC=contoso,DC=com
 SamAccountName    : dwood
 pwdlastset        : 131753201776369314
 pwdlastsetDate    : 7/6/2018 3:09:37 AM
-OLDpwdlastset     : 131753201305111407
-OLDpwdlastsetDate : 7/6/2018 3:08:50 AM
+OLDpwdlastset     : 131615616553652266
+OLDpwdlastsetDate : 1/27/2018 9:20:55 PM
+
+    .EXAMPLE
+Get-ADUser -Filter {samaccountname -like 'dwoo*'} | Reset-ADPasswordExpiration
+DistinguishedName : CN=Daniel Wood,OU=Users,DC=contoso,DC=com
+SamAccountName    : dwood
+pwdlastset        : 131753201776369314
+pwdlastsetDate    : 7/6/2018 3:09:37 AM
+OLDpwdlastset     : 131615616553652266
+OLDpwdlastsetDate : 1/27/2018 9:20:55 PM
+
+DistinguishedName : CN=David Woodard,OU=Users,DC=contoso,DC=com
+SamAccountName    : dwoodard
+pwdlastset        : 131753201776369314
+pwdlastsetDate    : 7/6/2018 3:09:37 AM
+OLDpwdlastset     : 131649253057717289
+OLDpwdlastsetDate : 3/7/2018 7:41:45 PM
     #>
 
     [CmdletBinding()]
