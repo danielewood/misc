@@ -1,15 +1,19 @@
 function Reset-ADPasswordExpiration {
-    <#
-    .SYNOPSIS
+<#
+.SYNOPSIS
 Resets AD Password Expiration by changing date of pwdlastset to now.
-    .DESCRIPTION
+
+.DESCRIPTION
 Resets AD Password Expiration by changing date of pwdlastset to now.
-    .NOTES
+
+.NOTES
 Script by Daniel Wood (https://github.com/danielewood).
 Code is licened under Unlicense / CCZero / WTFPL / Public Domain.
-    .LINK
+
+.LINK
 https://github.com/danielewood/misc/tree/master/powershell
-    .EXAMPLE
+
+.EXAMPLE
 Reset-ADPasswordExpiration -SamAccountName dwood -Verbose
 VERBOSE: $Identity = dwood
 VERBOSE: Changed pwdlastset from 131615616553652266 to Now
@@ -23,7 +27,7 @@ pwdlastsetDate    : 7/6/2018 3:09:37 AM
 OLDpwdlastset     : 131615616553652266
 OLDpwdlastsetDate : 1/27/2018 9:20:55 PM
 
-    .EXAMPLE
+.EXAMPLE
 Get-ADUser -Filter {samaccountname -like 'dwoo*'} | Reset-ADPasswordExpiration
 DistinguishedName : CN=Daniel Wood,OU=Users,DC=contoso,DC=com
 SamAccountName    : dwood
@@ -38,7 +42,7 @@ pwdlastset        : 131753201776369314
 pwdlastsetDate    : 7/6/2018 3:09:37 AM
 OLDpwdlastset     : 131649253057717289
 OLDpwdlastsetDate : 3/7/2018 7:41:45 PM
-    #>
+#>
 
     [CmdletBinding()]
     param (
@@ -58,7 +62,7 @@ OLDpwdlastsetDate : 3/7/2018 7:41:45 PM
         $Oldpwdlastset = $User.pwdlastset
 
         Write-Verbose "`$Identity = $Identity"    
-		Write-Debug "`$User = $User"
+        Write-Debug "`$User = $User"
         Write-Debug "`$Oldpwdlastset = $Oldpwdlastset"
 
         $User.pwdlastset = 0 
