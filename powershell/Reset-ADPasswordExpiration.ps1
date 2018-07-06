@@ -1,13 +1,13 @@
 function Reset-ADPasswordExpiration {
     <#
     .SYNOPSIS
-    Resets AD Password Expiration by changing date of pwdlastset to now.
+Resets AD Password Expiration by changing date of pwdlastset to now.
     .DESCRIPTION
-    Resets AD Password Expiration by changing date of pwdlastset to now.
+Resets AD Password Expiration by changing date of pwdlastset to now.
     .NOTES
-    Script by Daniel Wood (https://github.com/danielewood). Code is licened under Unlicense / CCZero / WTFPL / Public Domain.
+Script by Daniel Wood (https://github.com/danielewood). Code is licened under Unlicense / CCZero / WTFPL / Public Domain.
     .LINK
-    https://github.com/danielewood/misc/tree/master/powershell
+https://github.com/danielewood/misc/tree/master/powershell
     .EXAMPLE
 Get-ADUser -Filter {samaccountname -like 'dwoo*'} | Reset-ADPasswordExpiration -Verbose
 VERBOSE: $Identity = CN=Daniel Wood,OU=Users,DC=contoso,DC=com
