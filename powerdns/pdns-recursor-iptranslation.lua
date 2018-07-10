@@ -1,5 +1,5 @@
 --.DESCRIPTION
--- This LUA script for PowerDNS will provide on-the-fly DNS Translation of IPv4 "A" Records.
+-- This Lua script for PowerDNS will provide on-the-fly DNS Translation of IPv4 "A" Records.
 -- This is to facilitate DNS resolution across a massive 1:1 NAT for network mergers and IP deconfliction.
 -- The example configuration below translates 10.54.64.0/18 and 10.54.128.0/18 to 172.19.64.0/18 and 172.19.128.0/18
 -- Use this in conjunction with something like the following iptables setup:
