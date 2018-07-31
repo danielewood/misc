@@ -22,7 +22,7 @@ while read -r config; do
 
 	printf "${BLUE}---${NC}\n"
 	[ ! $CERT_NOTAFTER ] && printf "Could not evaluate certificate for {RED}$CERT_PATH/$CERT_CN.cer${NC}, skipping...\r\n" && continue
-	[ -f $CERT_PATH/$CERT_FRIENDLYNAME.pfx ] && printf "${RED}$CERT_PATH/$CERT_FRIENDLYNAME.pfx${NC} already exists, skipping.\r\n" && continue
+	[ -f $CERT_PATH/$CERT_FRIENDLYNAME.pfx ] && printf "${RED}$CERT_PATH/$CERT_FRIENDLYNAME.pfx${NC} already exists, skipping...\r\n" && continue
 
 	openssl pkcs12 -inkey $CERT_PATH/$CERT_CN.key -in $CERT_PATH/$CERT_CN.cer -certfile $CERT_PATH/fullchain.cer -name $CERT_FRIENDLYNAME -export -out $CERT_PATH/$CERT_FRIENDLYNAME.pfx -password pass:"$PFX_PASSWORD"
 	openssl pkcs12 -info -in $CERT_PATH/$CERT_FRIENDLYNAME.pfx -password pass:$PFX_PASSWORD -nokeys -clcerts 2>/dev/null grep '^subject='
