@@ -1,8 +1,15 @@
 #/bin/bash
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+
+# Create Windows compatible PFX for all "acme.sh" generated Let's Encrypt Certificates.
+# Output PFX filenames and Certificate Friendly Names are the same. They will be "Domain-StartDate-EndDate"
+
+#User Variables
+CERT_HOME='~/.acme.sh/'
 CERT_PASSWORD='P@S5W0rd!'
 
+#Begin Script
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 while read -r config; do
 	CERT_PATH="`echo $config | sed 's%/[^/]*$%%'`"
 	[ ! -f $CERT_PATH/fullchain.cer ] && continue
@@ -21,5 +28,5 @@ while read -r config; do
 	[ "$CERT_SANS" ] && printf "Subject Alternative Names:\r\n$CERT_SANS\r\n"
 	echo "Path to certificates: $CERT_PATH"
 	echo "PFX is located at: `ls $CERT_PATH/$CERT_FRIENDLYNAME.pfx`"
-done <<< "`grep -rl 'Le_Domain=' ~/.acme.sh/ | grep '\.conf$'`"
+done <<< "`grep -rl 'Le_Domain=' $CERT_HOME | grep '\.conf$'`"
 
