@@ -1,7 +1,7 @@
 #/bin/bash
 
 #.DESCRIPTION
-# Convert-AcmeCERtoPFX.sh creates Windows compatible PFX for all "acme.sh" generated Let's Encrypt Certificates.
+# Convert-AcmeCERtoPFX.sh creates a Windows compatible PFX for each "acme.sh" generated Let's Encrypt Certificate.
 # Output PFX filenames and Certificate Friendly Names are the same. They will be "Domain-StartDate-EndDate"
 
 #.NOTES
