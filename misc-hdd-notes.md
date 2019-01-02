@@ -26,6 +26,9 @@
 ### Automagically map physical ports to enclosure for ZFS vdev use
     #!/bin/bash
     # Remove all disks except for boot drives. Add boot drives to exclusion with grep -v
+    # Use a SSD, insert it in each bay, sequentially of how you want it numbered, 
+    #     starting with 0 (or change COUNT=0 to desired starting value)
+    
     rm /tmp/vdev_id.conf 2>/dev/null
     rm /tmp/port-mapper.txt 2>/dev/null
     COUNT=0
