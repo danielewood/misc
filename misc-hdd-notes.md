@@ -42,3 +42,14 @@
     # Expected Output:
     # [ 8459.371314] 2019-01-02T18:34:01-0800 zpool status data: 12.7T scanned out of 67.5T at 1.70G/s, 9h11m to go, 1.55T resilvered, 18.76% done
     # [ 8519.454816] 2019-01-02T18:35:01-0800 zpool status data: 12.8T scanned out of 67.5T at 1.70G/s, 9h10m to go, 1.56T resilvered, 18.92% done
+
+### misc crontab entries
+    # Weekly mdadm array scrub (sends check command to all md devices)
+      0  1  *  *  6 root find /sys/block/md*/md/sync_action -exec bash -c 'echo check > "{}"' \;
+
+    # Weekly zfs array scrub
+      0  1  *  *  6 root zpool scrub data
+
+    # Weekly HDD SMART Offline Scan (runs when drive is idle, so we dont need to worry if the ZFS scrub has finished)
+      0  9  *  *  6 root find /dev/disk/by-vdev/ -name '[EFS][0-9][0-9]' -exec bash -c 'smartctl -t offline {}' \; > /dev/null
+
