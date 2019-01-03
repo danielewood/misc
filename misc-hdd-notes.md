@@ -23,24 +23,12 @@
     for x in `find /dev/disk/by-vdev/* | grep -vE 'part|Cache' | sort`; \
     do echo "$x "; smartctl -l selftest $x|grep -E 'Extended|Status'; done
 
-### Automagically map physical ports to enclosure for ZFS vdev use
-    #!/bin/bash
-    # Remove all disks except for boot drives. Add boot drives to exclusion with grep -v
-    # Use a SSD, insert it in each bay, sequentially of how you want it numbered, 
-    #     starting with 0 (or change COUNT=0 to desired starting value)
+### Make netdata use ZFS's /dev/disk/by-vdev for available disk names
+1. Edit /etc/netdata/netdata.conf, like this:
+```
+[plugin:proc:/proc/diskstats]
+    path to /dev/disk/by-id = /dev/disk/vdev
+    name disks by id = yes
+```
     
-    rm /tmp/vdev_id.conf 2>/dev/null
-    rm /tmp/port-mapper.txt 2>/dev/null
-    COUNT=0
-    while true
-    do
-        PORTPATH="`find /dev/disk/by-path/pci-0000:03:00.0-sas-phy* | grep '\-phy' | grep -v '\-part'`"
-        LASTLINE="`cat /tmp/port-mapper.txt 2>/dev/null | tail -1`"
-        if [ "$PORTPATH" != "$LASTLINE" ]; then
-            printf -v PADDED_COUNT "%02d" $COUNT
-            echo "$PORTPATH" >> /tmp/port-mapper.txt
-            echo "alias E$PADDED_COUNT $PORTPATH" | tee --append /tmp/vdev_id.conf
-            let "COUNT++"
-        fi
-        sleep 1
-    done
+2. Run: `systemctl restart netdata.service`
