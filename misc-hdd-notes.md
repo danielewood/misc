@@ -32,3 +32,13 @@
 ```
     
 2. Run: `systemctl restart netdata.service`
+
+### crontab to log ZFS resilver/scrub activity to dmesg
+    # Replace data with your pool name, echo only triggers if $SCRUB is not null.
+    # /etc/crontab
+    *   *  *  *  * root SCRUB=`zpool status data | grep -A1 'to go$' | sed 's/to go/to go,/'` && echo `date --iso-8601=seconds` zpool status data: $SCRUB > /dev/kmsg
+    
+    
+    # Expected Output:
+    # [ 8459.371314] 2019-01-02T18:34:01-0800 zpool status data: 12.7T scanned out of 67.5T at 1.70G/s, 9h11m to go, 1.55T resilvered, 18.76% done
+    # [ 8519.454816] 2019-01-02T18:35:01-0800 zpool status data: 12.8T scanned out of 67.5T at 1.70G/s, 9h10m to go, 1.56T resilvered, 18.92% done
