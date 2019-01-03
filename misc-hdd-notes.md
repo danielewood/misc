@@ -27,7 +27,7 @@
 1. Edit /etc/netdata/netdata.conf, like this:
 ```
 [plugin:proc:/proc/diskstats]
-    path to /dev/disk/by-id = /dev/disk/vdev
+    path to /dev/disk/by-id = /dev/disk/by-vdev
     name disks by id = yes
 ```
     
