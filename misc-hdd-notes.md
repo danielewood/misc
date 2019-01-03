@@ -43,6 +43,11 @@
     # [ 8459.371314] 2019-01-02T18:34:01-0800 zpool status data: 12.7T scanned out of 67.5T at 1.70G/s, 9h11m to go, 1.55T resilvered, 18.76% done
     # [ 8519.454816] 2019-01-02T18:35:01-0800 zpool status data: 12.8T scanned out of 67.5T at 1.70G/s, 9h10m to go, 1.56T resilvered, 18.92% done
 
+### crontab syncoid task
+    # Syncs datasets from SourceServer every day at 3pm.
+    # The output redirect creates a per-line timestamped log file, useful to appending to any cron job to achieve the same function.
+      0 15  *  *  * root /usr/local/bin/syncoid --recursive --no-sync-snap --debug --exclude 'dataset01\/\.system' root@SourceServer:dataset01 data &> >(while read line; do echo "`date --iso-8601=seconds`: $line" >> /var/log/syncoid.log; done;)
+    
 ### misc crontab entries
     # Weekly mdadm array scrub (sends check command to all md devices)
       0  1  *  *  6 root find /sys/block/md*/md/sync_action -exec bash -c 'echo check > "{}"' \;
