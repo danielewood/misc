@@ -36,7 +36,7 @@
 ### crontab to log ZFS resilver/scrub activity to dmesg
     # Replace data with your pool name, echo only triggers if $SCRUB is not null.
     # /etc/crontab
-    *   *  *  *  * root SCRUB=`zpool status data | grep -A1 'to go$' | sed 's/to go/to go,/'` && echo `date --iso-8601=seconds` zpool status data: $SCRUB > /dev/kmsg
+    *   *  *  *  * root STATUS=`zpool status data | sed 's/to go/to go,/' | grep -A1 'to go,$'` && echo `date --iso-8601=seconds` zpool status data: $STATUS > /dev/kmsg
     
     
     # Expected Output:
