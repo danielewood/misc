@@ -1,0 +1,7 @@
+#
+# /usr/lib/udev/rules.d/68-expander_id.rules
+#
+
+KERNELS=="expander-*", ENV{DEVTYPE}=="disk" SUBSYSTEM=="block", PROGRAM="/usr/lib/udev/expander_id -d %k", ENV{ID_EXPANDER}="%c", SYMLINK="disk/by-expander/%c"
+KERNELS=="expander-*", ENV{DEVTYPE}=="partition" SUBSYSTEM=="block", PROGRAM="/usr/lib/udev/expander_id -d %k", ENV{ID_EXPANDER}="%c", SYMLINK="disk/by-expander/%c-part%n"
+
