@@ -12,33 +12,33 @@ usage() {
 Usage: expander_id [-h]
        expander_id <-d device>
 
-  -d    specify basename of device (i.e. sda)
-  -h    show this summary
+    -d    specify basename of device (i.e. sda)
+    -h    show this summary
 EOF
     exit 0
 }
 
 expander_handler () {
     # Expected syspath output looks like:
-	# /sys/class/sas_expander/expander-0:0/device/port-0:0:0/end_device-0:0:0/target0:0:0/0:0:0:0/block/sda
+    # /sys/class/sas_expander/expander-0:0/device/port-0:0:0/end_device-0:0:0/target0:0:0/0:0:0:0/block/sda
     sys_path=`find /sys/class/sas_expander/*/device/* -name $DEV`
-	
-	# Use expander-X:X to build lookup for SAS expander address,
-	# this method will may fail on a daisy chained expander
-	EXP_PATH=`echo $sys_path | grep -Eo '.+expander-[0-9]+:[0-9]+'`	
-	EXP_ID=`echo $sys_path | grep -Eo 'expander-[0-9]+:[0-9]+'`
-	EXP_SAS=`cat $EXP_PATH/device/sas_device/$EXP_ID/sas_address`
-	
-	# End device is consistently the same port number on HP SAS Expanders, even after multiple insertions
-	ENDDEV_PATH=`echo $sys_path | grep -Eo '.+end_device-[0-9]+:[0-9]+:[0-9]+'`
-	ENDDEV_ID=`echo $sys_path | grep -Eo 'end_device-[0-9]+:[0-9]+:[0-9]+'`
+    
+    # Use expander-X:X to build lookup for SAS expander address,
+    # this method may fail on a daisy chained expander
+    EXP_PATH=`echo $sys_path | grep -Eo '.+expander-[0-9]+:[0-9]+'`    
+    EXP_ID=`echo $sys_path | grep -Eo 'expander-[0-9]+:[0-9]+'`
+    EXP_SAS=`cat $EXP_PATH/device/sas_device/$EXP_ID/sas_address`
+    
+    # End device is consistently the same port number on HP SAS Expanders, even after multiple insertions
+    ENDDEV_PATH=`echo $sys_path | grep -Eo '.+end_device-[0-9]+:[0-9]+:[0-9]+'`
+    ENDDEV_ID=`echo $sys_path | grep -Eo 'end_device-[0-9]+:[0-9]+:[0-9]+'`
     PHY_ID=`echo "$ENDDEV_ID" | sed 's/.*\://'`
-	
-	# I like all my phy's to be two digits so they sort properly
-	printf -v PHY_ID "%02d" $PHY_ID
-	
-	# The last two hex character of the SAS expander change with each device,
-	#so we'll strip them and only get the significant sigits
+    
+    # I like all my phy's to be two digits so they sort properly
+    printf -v PHY_ID "%02d" $PHY_ID
+    
+    # The last two hex character of the SAS expander change with each device,
+    #so we'll strip them and only get the significant sigits
     NAME="exp${EXP_SAS::-2}-phy$PHY_ID"
     echo "${NAME}"
 }
@@ -49,14 +49,14 @@ while getopts 'd:h' OPTION; do
         DEV=${OPTARG}
         ;;
     h)
-	    usage
-		;;
+        usage
+        ;;
     esac
 done
 
 if [ -z "$DEV" ] ; then
-	echo "Error: missing required option -d"
-	exit 1
+    echo "Error: missing required option -d"
+    exit 1
 fi
 
 # Strip partition numbers, partition naming is handled in the udev.d rules
@@ -71,11 +71,11 @@ fi
 if [ `echo $sys_path | grep expander` ] ; then
     ID_EXPANDER=$(expander_handler)
     if [ -z "$ID_EXPANDER" ] ; then
-	    echo "EMPTY ID_EXPANDER: ID_EXPANDER=$ID_EXPANDER; -d=$2; DEV=$DEV; FIND=`find /sys/class/enclosure/*/*/device/block/ -name $DEV`" > /dev/kmsg
+        echo "EMPTY ID_EXPANDER: ID_EXPANDER=$ID_EXPANDER; -d=$2; DEV=$DEV; FIND=`find /sys/class/enclosure/*/*/device/block/ -name $DEV`" > /dev/kmsg
         exit 1
     fi
 
-	#echo "ID_EXPANDER=$ID_EXPANDER; 2=$2; DEV=$DEV; FIND=`find /sys/class/enclosure/*/*/device/block/ -name $DEV`" > /dev/kmsg
-	echo "$ID_EXPANDER"
+    #echo "ID_EXPANDER=$ID_EXPANDER; 2=$2; DEV=$DEV; FIND=`find /sys/class/enclosure/*/*/device/block/ -name $DEV`" > /dev/kmsg
+    echo "$ID_EXPANDER"
     exit 0
 fi
