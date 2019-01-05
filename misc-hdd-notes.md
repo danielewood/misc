@@ -58,3 +58,7 @@
     # Weekly HDD SMART Offline Scan (runs when drive is idle, so we dont need to worry if the ZFS scrub has finished)
       0  9  *  *  6 root find /dev/disk/by-vdev/ -name '[EFS][0-9][0-9]' -exec bash -c 'smartctl -t offline {}' \; > /dev/null
 
+### Disable NCQ on CentOS 7:
+    Edit /etc/default/grub
+    Add libata.force=noncq to GRUB_CMDLINE_LINUX
+    [ -d /sys/firmware/efi ] && `echo UEFI; grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg` || `echo BIOS; grub2-mkconfig -o /boot/grub2/grub.cfg`
