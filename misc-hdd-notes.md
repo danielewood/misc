@@ -33,16 +33,17 @@
     
 2. Run: `systemctl restart netdata.service`
 
-### crontab to log ZFS resilver/scrub activity to dmesg
-    # Replace data with your pool name, echo only triggers if $SCRUB is not null.
+### crontab to log ZFS resilver/scrub activity to the systemd logger
+    # Replace data with your pool name, echo only triggers if $STATUS is not null.
     # /etc/crontab
-    *   *  *  *  * root STATUS=`zpool status data | sed 's/to go/to go,/' | grep -A1 'to go,$'` && echo `date --iso-8601=seconds` zpool status data: $STATUS > /dev/kmsg
+      *  *  *  *  * root STATUS=`zpool status data | sed 's/to go/to go,/' | grep -A1 'to go,$'` && echo zpool status data: $STATUS | systemd-cat -t zstatus
     
-    
+    # Display all zstatus entries with:
+    # journalctl -t zstatus
+    #
     # Expected Output:
-    # [ 8459.371314] 2019-01-02T18:34:01-0800 zpool status data: 12.7T scanned out of 67.5T at 1.70G/s, 9h11m to go, 1.55T resilvered, 18.76% done
-    # [ 8519.454816] 2019-01-02T18:35:01-0800 zpool status data: 12.8T scanned out of 67.5T at 1.70G/s, 9h10m to go, 1.56T resilvered, 18.92% done
-
+    # Jan 05 16:18:01 localhost.localdomain zstatus[19366]: zpool status data: 32.6T scanned out of 67.5T at 1.27G/s, 7h49m to go, 0B repaired, 48.34% done
+    # Jan 05 16:19:02 localhost.localdomain zstatus[27121]: zpool status data: 32.7T scanned out of 67.5T at 1.27G/s, 7h48m to go, 0B repaired, 48.45% done
 ### crontab syncoid task
     # Syncs datasets from SourceServer every day at 3pm.
     # The output redirect creates a per-line timestamped log file, useful to appending to any cron job to achieve the same function.
