@@ -5,7 +5,7 @@
 
 ### Find all disks that failed last SMART test:
     for x in `find /dev/disk/by-vdev/* | grep -vE 'part|Cache' | sort`; \
-    do STATUS=`smartctl -a $x | grep '# 1  Extended offline    Completed: read failure'` && echo "Replace $x" ; done
+    do STATUS=`smartctl -a $x | grep 'Completed: read failure'` && echo "Replace $x" ; done
 
 ### Get HDD Temperature for all disks in /dev/disk/by-vdev/
     for x in `find /dev/disk/by-vdev/* | grep -vE 'part|Cache' | sort`; \
@@ -34,8 +34,7 @@
 2. Run: `systemctl restart netdata.service`
 
 ### crontab to log ZFS resilver/scrub activity to the systemd logger
-    # Replace data with your pool name, echo only triggers if $STATUS is not null.
-    # /etc/crontab
+    # Writes any scrubbing/resilvering status every minute to systemd logs, only triggers if $STATUS is not null
       *  *  *  *  * root STATUS=`zpool status data | sed 's/to go/to go,/' | grep -A1 'to go,$'` && echo zpool status data: $STATUS | systemd-cat -t zstatus
     
     # Display all zstatus entries with:
@@ -47,7 +46,9 @@
 ### crontab syncoid task
     # Syncs datasets from SourceServer every day at 3pm.
     # The output redirect creates a per-line timestamped log file, useful to appending to any cron job to achieve the same function.
-      0 15  *  *  * root /usr/local/bin/syncoid --recursive --no-sync-snap --debug --exclude 'dataset01\/\.system' root@SourceServer:dataset01 data &> >(while read line; do echo "`date --iso-8601=seconds`: $line" >> /var/log/syncoid.log; done;)
+      0 15  *  *  * root /usr/local/bin/syncoid --recursive --no-sync-snap --debug --exclude 'dataset01\/\.system' root@SourceServer:dataset01 data | systemd-cat -t syncoid
+    # Display all syncoid entries with:
+    # journalctl -t syncoid
     
 ### misc crontab entries
     # Weekly mdadm array scrub (sends check command to all md devices)
@@ -57,7 +58,12 @@
       0  1  *  *  6 root zpool scrub data
 
     # Weekly HDD SMART Offline Scan (runs when drive is idle, so we dont need to worry if the ZFS scrub has finished)
-      0  9  *  *  6 root find /dev/disk/by-vdev/ -name '[EFS][0-9][0-9]' -exec bash -c 'smartctl -t offline {}' \; > /dev/null
+      0  3  *  *  7 root find /dev/disk/by-vdev/ -name '[EFS][0-9][0-9]' -exec bash -c 'STATUS=`smartctl -t offline {} | grep -Eo "^Test.+|^Please.+"`; echo Device: `readlink -f {}` \[{}\], $STATUS | systemd-cat -t smartd -p info' \;
+    # Display all smartd entries with:
+    # journalctl -t smartd
+    #
+    # Expected Output:
+    # Jan 07 12:17:55 localhost.localdomain smartd[32237]: Device: /dev/sdaa [/dev/disk/by-vdev/F02], Testing has begun. Please wait 49440 seconds for test to complete. Test will complete after Tue Jan 8 02:01:55 2019
 
 ### Disable NCQ on CentOS 7:
     Edit /etc/default/grub
