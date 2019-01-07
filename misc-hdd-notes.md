@@ -57,8 +57,8 @@
     # Weekly zfs array scrub
       0  1  *  *  6 root zpool scrub data
 
-    # Weekly HDD SMART Offline Scan (runs when drive is idle, so we dont need to worry if the ZFS scrub has finished)
-      0  3  *  *  7 root find /dev/disk/by-vdev/ -name '[EFS][0-9][0-9]' -exec bash -c 'STATUS=`smartctl -t offline {} | grep -Eo "^Test.+|^Please.+"`; echo Device: `readlink -f {}` \[{}\], $STATUS | systemd-cat -t smartd -p info' \;
+    # Weekly HDD SMART Extended Offline Scan (runs when drive is idle, so we dont need to worry if the ZFS scrub has finished)
+      0  3  *  *  7 root find /dev/disk/by-vdev/ -name '[EFS][0-9][0-9]' -exec bash -c 'STATUS=`smartctl -t long {} | grep -Eo "^Test.+|^Please.+"`; echo Device: `readlink -f {}` \[{}\], $STATUS | systemd-cat -t smartd -p info' \;
     # Display all smartd entries with:
     # journalctl -t smartd
     #
