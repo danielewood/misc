@@ -20,8 +20,16 @@
     bs=1M count=2000 status=progress; done
 
 ### Get SMART Test Details
-    for x in `find /dev/disk/by-vdev/* | grep -vE 'part|Cache' | sort`; \
+    for x in `find /dev/disk/by-vdev/* ! -name '*part[0-9]' | sort`; \
     do echo "$x "; smartctl -l selftest $x|grep -E 'Extended|Status'; done
+
+### Get SMART Test Details (Current and last two tests)
+    for x in `find /dev/disk/by-vdev/* ! -name '*part[0-9]' | sort`; \
+    do echo $x; smartctl -a $x | grep -E '\%' | grep -vE 'by host|^\# [3-9]|# [1-9][0-9]' | sed 's/\t\t\t\t\t/Current Test: /'; done
+    
+### List disks needing replacement
+    for x in `find /dev/disk/by-vdev/* ! -name '*part[0-9]' | sort`; \
+    do STATUS=`smartctl -l selftest $x | grep 'Completed: read failure'` && echo "Replace $x" ; done
 
 ### Make netdata use ZFS's /dev/disk/by-vdev for available disk names
 1. Edit /etc/netdata/netdata.conf, like this:
