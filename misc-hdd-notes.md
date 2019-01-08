@@ -3,9 +3,13 @@
 ### Find all sdX disk mappings
     find /dev/disk/ -type l -exec bash -c 'RL=`readlink -f {}`; echo $RL "{}"' \; | cut -c 6- | sort
 
-### Use OpenSSL to rapidly generate incompressable data (~670MB/sec on a 1.8GHz E5-2603 V2)
+### Use OpenSSL to rapidly generate incompressable data
+    # 670MB/sec on a E5-2603 v1 @ 1.80GHz
+    # 1.3GB/sec on a E5-2690 v2 @ 3.00GHz
+    # 1.7GB/sec on a i7-3770 @ 3.40GHz
     dd bs=1M count=10000 iflag=fullblock status=progress of=/dev/null \
     if=<(openssl enc -aes-256-ctr -pass pass:"$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64)" -nosalt < /dev/zero) 
+
 
 ### Write 2GB of /tmp/test.file1 to /data over and over again with a unique filename each rotation
     while true; do dd if=/tmp/test.file1 of="/data/test`echo $(($(date +%s%N)/1000000))`" \
