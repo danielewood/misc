@@ -1,14 +1,14 @@
 ## HDD Management/mapping/testing commands
 
 ### Find all sdX disk mappings
-    find /dev/disk/ -type l -exec bash -c 'RL=`readlink "{}"`; echo $RL "{}"' \; | cut -c 7- | sort
+    find /dev/disk/ -type l -exec bash -c 'RL=`readlink -f {}`; echo $RL "{}"' \; | cut -c 6- | sort
 
 ### Find all disks that failed last SMART test:
-    for x in `find /dev/disk/by-vdev/* | grep -vE 'part|Cache' | sort`; \
+    for x in `find /dev/disk/by-vdev/* ! -name '*part[0-9]' | sort`; \
     do STATUS=`smartctl -a $x | grep 'Completed: read failure'` && echo "Replace $x" ; done
 
 ### Get HDD Temperature for all disks in /dev/disk/by-vdev/
-    for x in `find /dev/disk/by-vdev/* | grep -vE 'part|Cache' | sort`; \
+    for x in `find /dev/disk/by-vdev/* ! -name '*part[0-9]' | sort`; \
     do echo "`hddtemp --quiet $x`"; done
 
 ### Use OpenSSL to rapidly generate incompressable data (~670MB/sec on a 1.8GHz E5-2603 V2)
