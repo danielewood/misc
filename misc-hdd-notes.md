@@ -76,3 +76,9 @@
     Edit /etc/default/grub
     Add libata.force=noncq to GRUB_CMDLINE_LINUX
     [ -d /sys/firmware/efi ] && `grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg` || `grub2-mkconfig -o /boot/grub2/grub.cfg`
+
+### Enable persistent journal on CentOS 7:
+    sed -i 's/\#Storage\=auto/Storage\=persistent/' /etc/systemd/journald.conf
+    systemd-tmpfiles --create --prefix /var/log/journal
+    systemctl restart systemd-journald
+    
