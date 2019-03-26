@@ -95,5 +95,5 @@
     # Write new firmware
     sg_write_buffer --mode=dmc_offs_defer --bpw=4096 --in=PUF21000.bin /dev/sgX
     sg_write_buffer --mode=activate_mc /dev/sgX
-    #Reboot and run lsscsi to validate.
+    # Reboot and run lsscsi to validate.
     lsscsi -g | grep -Eo 'HP SAS EXP Card.+'
