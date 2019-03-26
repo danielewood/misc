@@ -90,3 +90,4 @@
     lsscsi -g | grep -Eo 'HP SAS EXP Card  [12]\.[0][0-9].+'
     sg_write_buffer --mode=dmc_offs_defer --bpw=4096 --in=PUF21000.bin /dev/sgX
     sg_write_buffer --mode=activate_mc /dev/sgX
+    #Reboot and run lsscsi to validate.
