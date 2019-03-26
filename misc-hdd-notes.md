@@ -82,10 +82,11 @@
     systemd-tmpfiles --create --prefix /var/log/journal
     systemctl restart systemd-journald
     
-### Update firmware on HP SAS Expander to 2.10:
+### Update firmware on HP SAS Expander to 2.10 on CentOS7:
     Modified from: https://serverfault.com/a/631575
+    yum -y install http://sg.danny.cz/sg/p/sg3_utils-libs-1.44-1.x86_64.rpm http://sg.danny.cz/sg/p/sg3_utils-1.44-1.x86_64.rpm
     curl -O http://downloads.hpe.com/pub/softlib2/software1/sc-linux-fw-array/p6670438/v96061/CP022989.scexe
     mkdir tmp && chmod +x CP022989.scexe && ./CP022989.scexe --unpack=tmp && mv tmp/PUF21000.bin . && rm -r tmp/
-    lsscsi -g | grep -Eo 'HP SAS EXP Card  [12]\.[0][0-9].+
+    lsscsi -g | grep -Eo 'HP SAS EXP Card  [12]\.[0][0-9].+'
     sg_write_buffer --mode=dmc_offs_defer --bpw=4096 --in=PUF21000.bin /dev/sgX
-    sg_write_buffer --mode=activate_mc /dev/sg1
+    sg_write_buffer --mode=activate_mc /dev/sgX
