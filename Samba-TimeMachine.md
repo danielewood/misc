@@ -139,6 +139,7 @@ If your Time Machine Target and Client Machines will not always be on the same s
   - [cocoadialog.com: CocoaDialog Documentation](https://cocoadialog.com/v2/#)
   - [github.com: CocoaDialog Download](https://github.com/cocoadialog/cocoadialog/issues/108#issuecomment-396059785)
 - [kirb.me: Using Linux or Windows as a Time Machine network server](https://kirb.me/2018/03/24/using-samba-as-a-time-machine-network-server.html)
+- [east.fm: FreeNAS with SMB, AFP, and TimeMachine](https://east.fm/posts/freenas-smb-afp-timemachine/index.html)
 
 ### Notes for Linux Users with manual Samba Configs
 
