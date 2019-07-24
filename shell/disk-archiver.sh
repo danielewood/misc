@@ -85,20 +85,20 @@ do
         disk_model=$(dmesg | grep "$disk_device" -B9 | grep 'Product:' | sed 's/.*\://g' | tr -d " \.\t")
         disk_serial=$(dmesg | grep "$disk_device" -B9 | grep 'SerialNumber:' | sed 's/.*\://g' | tr -d " \.\t")
     else
-	    # Examples:
-		# Namespace 1 Size/Capacity:          14,403,239,936 [14.4 GB]
-		# User Capacity:    500,107,862,016 bytes [500 GB]
+        # Examples:
+        # Namespace 1 Size/Capacity:          14,403,239,936 [14.4 GB]
+        # User Capacity:    500,107,862,016 bytes [500 GB]
         disk_capacity=$(echo "$disk_smart" | grep 'Capacity: ' | sed 's/.*\://g' | awk -F'[' '{print $1}' | tr -d "[A-Za-z], \t")
         disk_model=$(echo "$disk_smart" | grep -E 'Device Model:|Product:|Model Number:' | sed 's/.*\://g' | tr -d " \t")
         disk_serial=$(echo "$disk_smart" | grep -i 'Serial number:' | grep -Eo '[0-9A-Za-z]+$')
         disk_vendor=$(echo "$disk_smart" | grep -E 'Model Family:|Vendor:' | sed 's/.*\://g' | tr -d " \t")
     fi
-	disk_capacity="$(( disk_capacity / (1024*1024*1024) ))GB"
+    disk_capacity="$(( disk_capacity / (1024*1024*1024) ))GB"
     disk_name="${series}${prettycount}_${disk_vendor}_${disk_model}_${disk_capacity}_${disk_serial}"
     disk_name=${disk_name//__/_}
 
     echo "$disk_name"
-	echo "$path_disk"
+    echo "$path_disk"
     for disk_partition in $(ls "$path_disk"* | grep part)
     do
         grep -Eo '.*part[0-9]' <<<"$disk_partition"
@@ -139,6 +139,6 @@ do
         done
     fi
     [[ $ddrescue_trigger ]] && ddrescue -d -f -r9 "$path_disk" "$output_path/$disk_name.img" "$output_path/$disk_name.ddrescue"
-	count=$(( count+1 ))
+    count=$(( count+1 ))
     [[ $oneshot_trigger ]] && exit 0
 done
