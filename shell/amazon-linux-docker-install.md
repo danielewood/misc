@@ -9,11 +9,11 @@ Applies to Yum based Distros:
 yum -y install docker git gcc-c++ make
 
 # add ec2-user to docker group
-usermod, -aG docker ec2-user
+usermod -aG docker ec2-user
 
 # enable service
-systemctl, enable, docker
-systemctl, start, docker
+systemctl enable docker
+systemctl start docker
 ```
 
 ## docker-compose install
