@@ -104,6 +104,11 @@ docker container rm vouch-proxy
 docker system prune
 ```
 
+### Cleanup EVERYTHING not currently in use
+```bash
+docker system prune -a
+```
+
 ### Show container mount points
 ```bash
 docker inspect vouch-proxy | jq -c '.[0].Mounts'
