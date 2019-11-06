@@ -117,3 +117,5 @@ Solaris Live Upgrade: (Only complete first portion to move OS to a new drive and
 - [Activating a Boot Environment (Solaris 9 Installation Guide)](https://docs.oracle.com/cd/E19683-01/816-7171/6md6pohs3/index.html)
 - [Example of Upgrading With Solaris Live Upgrade](https://docs.oracle.com/cd/E18752_01/html/821-1910/luexample-100.html)
 - [Copy a Solaris Boot Drive to a New Disk](https://web.archive.org/web/20161030144345/http://spiralbound.net/blog/2005/05/10/how-to-copy-a-solaris-boot-drive-to-a-disk-with-a-different-partition-layout/)
+
+- [How to Manually clone a Solaris install to a new disk layout and make it bootable and modify fstab](https://www.experts-exchange.com/questions/28283756/dd-command-clone-for-Solaris-8.html)
