@@ -1,6 +1,6 @@
 # VMWare-ESXi-ssh-pubkey
 
-Commands to disabled ssh password authentication, enable ed25519 pubkey authentication, and make the sshd start at boot.
+Commands to disable ssh password authentication, enable ed25519 pubkey authentication, and make the sshd start at boot.
 
 ## Disable password auth, add ed25519 as an allowed key type
     cat<<'EOF'>>/etc/ssh/sshd_config
