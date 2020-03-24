@@ -10,7 +10,7 @@ cat<<'EOF'>/tmp/video_files_pattern.txt
 .*\.3G2$
 .*\.3GP$
 .*\.3GP2$
-.*\.3GPP
+.*\.3GPP$
 .*\.3GPP2$
 .*\.3MM$
 .*\.3P2$
@@ -492,7 +492,6 @@ cat<<'EOF'>/tmp/video_files_pattern.txt
 .*\.XLMV$
 .*\.XMV$
 .*\.XVID$
-.*\.Y4M$
 .*\.Y4M$
 .*\.YOG$
 .*\.YUV$
