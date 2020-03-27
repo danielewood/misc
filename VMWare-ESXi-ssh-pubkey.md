@@ -26,5 +26,6 @@ Commands to disable ssh password authentication, enable ed25519 pubkey authentic
     chmod 700 -R /etc/ssh/keys-root
     chmod 600 -R /etc/ssh/keys-root/authorized_keys
 
-## Enable SSHd on boot
+## Enable SSHd on boot and suppress SSH warning on WebUI
     vim-cmd hostsvc/enable_ssh
+    esxcfg-advcfg -s 1 /UserVars/SuppressShellWarning
