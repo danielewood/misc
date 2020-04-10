@@ -1,0 +1,26 @@
+# vouch config
+# bare minimum to get vouch running with gmail
+
+vouch:
+  domains:
+  - gmail.com
+
+# if you do not have a whitelist, any gmail account will be allowed
+whiteList:
+  - username1@gmail.com
+  - username2@gmail.com
+
+oauth:
+  provider: google
+  # get credentials from...
+  # https://console.developers.google.com/apis/credentials
+  client_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
+  client_secret: xxxxxxxxxxxxxxxxxxxxxxx
+# callback_urls must match the credentials page on GCP
+  callback_urls:
+    - https://vouch.YOUR.DOMAIN/auth
+#    - https://vouch.YOUROTHER.DOMAIN/auth
+  preferredDomain: gmail.com
+  # endpoints set from https://godoc.org/golang.org/x/oauth2/google
+  
+

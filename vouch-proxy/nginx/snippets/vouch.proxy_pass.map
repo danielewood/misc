@@ -1,0 +1,7 @@
+ui-test-report.YOUR_DOMAIN http://172.30.91.181;
+wanem.YOUR_DOMAIN http://192.168.51.149;
+FreeNAS.YOUR_DOMAIN http://10.50.0.30;
+FreeIPA.YOUR_DOMAIN https://FreeIPA.internal.YOUR_DOMAIN;
+sonarr.YOUR_DOMAIN http://127.0.0.1:8989;
+radarr.YOUR_DOMAIN http://127.0.0.1:7878;
+qbittorrent.YOUR_DOMAIN http://127.0.0.1:7879;

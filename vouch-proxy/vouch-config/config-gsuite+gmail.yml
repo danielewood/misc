@@ -1,0 +1,32 @@
+# vouch config
+# bare minimum to get vouch running with gsuite+gmail
+
+vouch:
+  domains:
+  - YOUR.DOMAIN
+  - YOUROTHER.DOMAIN
+  - gmail.com
+
+# if you do not have a whitelist, any of the above domains will be allowed if they are on the GCP API key.
+# alternatively, remove the whitelist and set preferredDomain to be YOUR.DOMAIN and remove gmail.com from the above list to allow anyone with @YOUR.DOMAIN google account.
+whiteList:
+  - username1@gmail.com
+  - username2@gmail.com
+  - john@YOUR.DOMAIN
+  - sarah@YOUROTHER.DOMAIN
+
+oauth:
+  provider: google
+  # get credentials from...
+  # https://console.developers.google.com/apis/credentials
+  client_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
+  client_secret: xxxxxxxxxxxxxxxxxxxxxxx
+# callback_urls must match the credentials page on GCP
+  callback_urls:
+    - https://vouch.YOUR.DOMAIN/auth
+#    - https://vouch.YOUROTHER.DOMAIN/auth
+
+  #preferredDomain: gmail.com
+  # endpoints set from https://godoc.org/golang.org/x/oauth2/google
+  
+
