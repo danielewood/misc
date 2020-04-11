@@ -2,7 +2,7 @@
 1. Have Docker and nginx setup.
 1. Copy nginx files from this folder to /etc/nginx
 1. Edit configs to replace YOUR.DOMAIN and YOUR_DOMAIN
-1. Edit `/etc/nginx/snippets/proxy_pass.map to reflect your environment`
+1. Edit `/etc/nginx/snippets/vouch.proxy_pass.map to reflect your environment`
 1. `systemctl reload nginx`
 1. Make vouch config folder (or clone from GitHub)
     ```bash
