@@ -1,3 +1,2 @@
-engineering.YOUR_DOMAIN https://www.google.com/;
-YOUR_DOMAIN https://example.com;
-oci1.YOUR_DOMAIN https://test.example.com;
+engineering.YOUR.DOMAIN https://www.google.com/;
+YOUR.DOMAIN https://example.com;
