@@ -23,8 +23,47 @@ You can obtain your current API Token and see your current customConnections URL
     Write-Host 'Plex API URL:' ${PlexOnlineToken}
     (Invoke-WebRequest -UseBasicParsing -Uri ${PlexOnlineToken}).Content
 ```
+# Plex Setup
 
-## Plex Setup
+## Linux Users
+
+The following bash script will update a docker container running Plex with the current Argo URLs.
+You will need to adjust `$PreferencesPath` to match your setup. If you are running Plex as a systemd service, just change docker to systemctl.
+
+I suggest you run this as a cron job every few minutes, or use a systemd timer.
+
+You will need [cloudflared](https://developers.cloudflare.com/argo-tunnel/downloads/) installed and running. You should probably write a systemd service file for it.
+
+### Plex-Argo-DirectoryUpdate.bash
+
+```bash
+#!/bin/bash
+# Assumes the cloudflared is running with metrics server
+# Example: cloudflared tunnel --url 'http://localhost:32400' --metrics 'localhost:33400'
+
+PreferencesPath='/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
+PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
+
+PlexAPIcustomConnections=$(curl -s $PlexOnlineToken | grep -oP 'address="\K[^"]*\.trycloudflare\.com' | head -n1)
+ArgoURL=$(curl -s http://localhost:33400/metrics | grep -oP 'userHostname="https://\K[^"]*\.trycloudflare\.com' | head -n1)
+
+[ -z $ArgoURL ] && exit
+[ -z $PlexAPIcustomConnections ] && exit
+
+if [[ $ArgoURL != $PlexAPIcustomConnections ]]; then
+    docker container stop plex
+    PreferencesValue="https://${ArgoURL}:443,http://${ArgoURL}:80"
+    # Set new Argo URL
+    sed -i "s|customConnections=\".*\"|customConnections\=\"${PreferencesValue}\"|" "${PreferencesPath}"
+    # Disable Plex Relay Servers
+    sed -i "s|RelayEnabled=\"1\"|RelayEnabled=\"0\"|" "${PreferencesPath}"
+    # Disable Plex Remote Access Methods
+    sed -i "s|PublishServerOnPlexOnlineKey=\"1\"|PublishServerOnPlexOnlineKey=\"0\"|" "${PreferencesPath}"
+    docker container restart plex
+fi
+```
+
+## Windows Users
 The following powershell snippet will Configure your Plex Media Server for Remote Access through CloudFlare.
 We are making sure that Plex Remote Access is disabled as we do not want to proxy anything through the Plex Servers and want it all done through CloudFlare.
 
