@@ -1,4 +1,7 @@
 #!/bin/bash
+# Assumes the cloudflared is running with metrics server
+# Example: cloudflared tunnel --url 'http://localhost:32400' --metrics 'localhost:33400'
+
 PreferencesPath='/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
 PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
 
