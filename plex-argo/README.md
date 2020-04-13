@@ -54,7 +54,16 @@ You will need to adjust `$PreferencesPath` to match your setup.
 
 I suggest you run this as a cron job every few minutes, or use a systemd timer.
 
-You will need [cloudflared](https://developers.cloudflare.com/argo-tunnel/downloads/) installed and running. You should probably write a `systemd` service file for it.
+You will need [cloudflared](https://developers.cloudflare.com/argo-tunnel/downloads/) installed and running. I recommend installing it as a service.
+
+```bash
+    sudo mkdir -p /etc/cloudflared
+    sudo bash -c "cat <<'EOF'>/etc/cloudflared/config.yml
+    url: http://localhost:32400
+    metrics: localhost:33400
+    EOF"
+    sudo cloudflared service install
+```
 
 ### Plex-Argo-DirectoryUpdate-docker.bash
 
