@@ -124,6 +124,6 @@ The following powershell script is embedded within the Scheduled Task, it will a
       Get-Process | ? {$_.path -eq $PlexEXE} | Stop-Process
       Start-Process $PlexEXE
     }
-	Start-Sleep 300
+    Start-Sleep 300
   }
 ```
