@@ -24,6 +24,18 @@ You can obtain your current API Token and see your current customConnections URL
     (Invoke-WebRequest -UseBasicParsing -Uri ${PlexOnlineToken}).Content
 ```
 
+## Plex Setup
+The following powershell snippet will Configure your Plex Media Server for Remote Access through CloudFlare.
+We are making sure that Plex Remote Access is disabled as we do not want to proxy anything through the Plex Servers and want it all done through CloudFlare.
+
+```powershell
+    $RegistryPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
+    # Disable "Settings/Remote Access"
+    Set-ItemProperty -Path ${RegistryPath} -Name PublishServerOnPlexOnlineKey -Value 0
+    # Disable "Settings/Network/Enable Relay"
+    Set-ItemProperty -Path ${RegistryPath} -Name RelayEnabled -Value 0 
+```
+
 ## Scheduled Tasks
 Included in this are two Windows Scheduled Task XMLs that contain all the logic needed to automatically maintain an Argo Tunnel and keep the Plex Directory up to date with your current tunnel URLs.
 
