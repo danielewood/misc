@@ -1,23 +1,30 @@
-# Create a free CloudFlare Argo tunnel to your Plex Media Server
-This enables fast remote access to your Plex Media Server, even behind a Carrier Grade NAT or VPN with no port-forwarding ability.
+# Create a **free** Cloudflare Argo Tunnel to your Plex Media Server
+
+Enables fast remote access to your Plex Media Server, even behind a carrier grade NAT or VPN with no port-forwarding ability.
 
 ## CloudFlare Argo
-Read the [CloudFlare blog post on Free Argo tunnels](https://blog.cloudflare.com/a-free-argo-tunnel-for-your-next-project/).
 
-TL;DR: Free **TryCloudFlare** Argo Tunnels:
- - Have a unique URL per session (i.e. apple-bali-matters-local.trycloudflare.com)
- - Support both HTTP:80 and HTTPS:443
- - Are free to use and have no bandwidth charges associated with them
- - Require no account or authentication
- - Operate much like a Reverse SSH tunnel + nginx on a remote VPS, except you dont need to do any setup.
- 
+Read the [The Cloudflare Blog - A free Argo Tunnel for your next project](https://blog.cloudflare.com/a-free-argo-tunnel-for-your-next-project/).
+
+TL;DR - Free **TryCloudFlare** Argo Tunnel features:
+ - Operate much like a Reverse SSH tunnel + nginx on a remote VPS
+ - Unique URLs per session (i.e. apple-bali-matters-local.trycloudflare.com)
+ - Support for http:80 & https:443
+ - Free to use and no bandwidth restrictions
+ - No account or authentication requirements
+ - Simplier setup with _much_ less overhead
  
 ## Plex Custom Connection URLs
-When you specity a Custom Connection URL in your Plex Media Server, it will publish that URL in the PlexAPI, allowing all your clients to discover alternative paths to your server. This Published information can be seen for your server by going to `https://plex.tv/api/resources?X-Plex-Token=YOUR_API_TOKEN`
-This API token is refreshed every time your Plex Media Server restarts.
 
-You can obtain your current API Token and see your current customConnections URL in the Plex API with the following powershell snippet:
-    
+When you specify a custom connection URL in your Plex Media Server, it will publish that URL in the PlexAPI. This allows all your clients to discover alternative paths to your server. 
+
+This Published information can be seen for your server by going to `https://plex.tv/api/resources?X-Plex-Token=YOUR_API_TOKEN`
+
+**NOTE:** This API token refreshes each time your Plex Media Server restarts.
+
+You can obtain your current API Token and see your current customConnections URL in the Plex API with the following:
+
+**Windows PowerShell** snippet:    
 ```powershell
     $RegistryPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
     $PlexOnlineToken=(Get-ItemProperty -Path $RegistryPath -Name PlexOnlineToken).PlexOnlineToken
@@ -25,16 +32,24 @@ You can obtain your current API Token and see your current customConnections URL
     Write-Host 'Plex API URL:' ${PlexOnlineToken}
     (Invoke-WebRequest -UseBasicParsing -Uri ${PlexOnlineToken}).Content
 ```
-# Plex Setup
+
+**Bash** snippet:
+```bash
+ cat /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml | grep -oP 'PlexOnlineToken="\K[^"]*
+ ```
+
+# Remote Access Tunnel Setup
 
 ## Linux Users
 
 The following bash script will update a docker container running Plex with the current Argo URLs.
-You will need to adjust `$PreferencesPath` to match your setup. If you are running Plex as a systemd service, just change docker to systemctl.
+You will need to adjust `$PreferencesPath` to match your setup. 
+
+**NOTE:** If you are running Plex as a systemd service, just change docker to systemctl.
 
 I suggest you run this as a cron job every few minutes, or use a systemd timer.
 
-You will need [cloudflared](https://developers.cloudflare.com/argo-tunnel/downloads/) installed and running. You should probably write a systemd service file for it.
+You will need [cloudflared](https://developers.cloudflare.com/argo-tunnel/downloads/) installed and running. You should probably write a `systemd` service file for it.
 
 ### Plex-Argo-DirectoryUpdate.bash
 
@@ -43,6 +58,7 @@ You will need [cloudflared](https://developers.cloudflare.com/argo-tunnel/downlo
 # Assumes the cloudflared is running with metrics server
 # Example: cloudflared tunnel --url 'http://localhost:32400' --metrics 'localhost:33400'
 
+#PreferencesPath='/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
 PreferencesPath='/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
 PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
 
@@ -54,6 +70,7 @@ ArgoURL=$(curl -s http://localhost:33400/metrics | grep -oP 'userHostname="https
 
 if [[ $ArgoURL != $PlexAPIcustomConnections ]]; then
     docker container stop plex
+    #systemctl stop plexmediaserver.service
     PreferencesValue="https://${ArgoURL}:443,http://${ArgoURL}:80"
     # Set new Argo URL
     sed -i "s|customConnections=\".*\"|customConnections\=\"${PreferencesValue}\"|" "${PreferencesPath}"
@@ -62,12 +79,15 @@ if [[ $ArgoURL != $PlexAPIcustomConnections ]]; then
     # Disable Plex Remote Access Methods
     sed -i "s|PublishServerOnPlexOnlineKey=\"1\"|PublishServerOnPlexOnlineKey=\"0\"|" "${PreferencesPath}"
     docker container restart plex
+    #systemctl start plexmediaserver.service
 fi
 ```
 
 ## Windows Users
-The following powershell snippet will Configure your Plex Media Server for Remote Access through CloudFlare.
-We are making sure that Plex Remote Access is disabled as we do not want to proxy anything through the Plex Servers and want it all done through CloudFlare.
+
+The following `PowerShell` snippet will Configure your Plex Media Server for Remote Access through CloudFlare.
+
+We are making sure that Plex Remote Access is disabled as we do not want to proxy anything through the Plex Servers and want it all done through Cloudflare.
 
 ```powershell
     $RegistryPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
@@ -92,11 +112,12 @@ Change `C:\PATH\TO\CLOUDFLARED\cloudflared.exe` to the path where you stored the
 This Scheduled Task launches cloudflared.exe and hides the powershell window on launch, so you should only see it momentarily and then never again.
 
 ### Plex-Argo-DirectoryUpdate.xml
+
 Updates Plex customConnection URLs, if different from Argo Tunnel URL, and restarts Plex Media Server to push new URLs to the Plex API
 
 When you import this XML into Task Scheduler, you will need to change the User under the Triggers Tab to the account which Plex runs under.
 
-The following powershell script is embedded within the Scheduled Task, it will attempt to update the Plex API URLs every five minutes if there are any changes. It hides the powershell window on launch, so you should only see it momentarily and then never again:
+The following PowerShell script is embedded within the Scheduled Task, it will attempt to update the Plex API URLs every five minutes if there are any changes. It hides the powershell window on launch, so you should only see it momentarily and then never again:
 
 ```powershell
   Start-Sleep 10
