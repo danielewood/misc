@@ -4,11 +4,13 @@ This enables fast remote access to your Plex Media Server, even behind a Carrier
 ## CloudFlare Argo
 Read the [CloudFlare blog post on Free Argo tunnels](https://blog.cloudflare.com/a-free-argo-tunnel-for-your-next-project/).
 
-TL;DR: TryCloudFlare Argo Tunnels:
- - Have Unique URL per session
+TL;DR: Free **TryCloudFlare** Argo Tunnels:
+ - Have a unique URL per session (i.e. apple-bali-matters-local.trycloudflare.com)
+ - Support both HTTP:80 and HTTPS:443
  - Are free to use and have no bandwidth charges associated with them
- - Require No Account or Authentication
+ - Require no account or authentication
  - Operate much like a Reverse SSH tunnel + nginx on a remote VPS, except you dont need to do any setup.
+ 
  
 ## Plex Custom Connection URLs
 When you specity a Custom Connection URL in your Plex Media Server, it will publish that URL in the PlexAPI, allowing all your clients to discover alternative paths to your server. This Published information can be seen for your server by going to `https://plex.tv/api/resources?X-Plex-Token=YOUR_API_TOKEN`
