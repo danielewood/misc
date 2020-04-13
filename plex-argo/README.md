@@ -6,7 +6,7 @@ Enables fast remote access to your Plex Media Server, even behind a carrier grad
 
 Read the [The Cloudflare Blog - A free Argo Tunnel for your next project](https://blog.cloudflare.com/a-free-argo-tunnel-for-your-next-project/).
 
-TL;DR - Free **TryCloudFlare** Argo Tunnel features:
+TL;DR - **Free TryCloudFlare** Argo Tunnel features:
  - Operate much like a Reverse SSH tunnel + nginx on a remote VPS
  - Unique URLs per session (i.e. apple-bali-matters-local.trycloudflare.com)
  - Support for http:80 & https:443
@@ -33,12 +33,12 @@ You can obtain your current API Token and see your current customConnections URL
     (Invoke-WebRequest -UseBasicParsing -Uri ${PlexOnlineToken}).Content
 ```
 
-**Docker** snippet:
+Bash snippet (**Docker**):
 ```bash
     grep -oP 'PlexOnlineToken="\K[^"]* '/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
 ```
 
-**systemd** snippet:
+Bash snippet (**systemd**):
 ```bash
     grep -oP 'PlexOnlineToken="\K[^"]* '/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
  ```
@@ -46,13 +46,6 @@ You can obtain your current API Token and see your current customConnections URL
 # Remote Access Tunnel Setup
 
 ## Linux Users
-
-The following bash script will update a docker container running Plex with the current Argo URLs.
-You will need to adjust `$PreferencesPath` to match your setup. 
-
-**NOTE:** If you are running Plex as a systemd service, just change docker to systemctl.
-
-I suggest you run this as a cron job every few minutes, or use a systemd timer.
 
 You will need [cloudflared](https://developers.cloudflare.com/argo-tunnel/downloads/) installed and running. I recommend installing it as a service.
 
@@ -64,6 +57,11 @@ You will need [cloudflared](https://developers.cloudflare.com/argo-tunnel/downlo
     EOF"
     sudo cloudflared service install
 ```
+
+The following bash script will update a docker container running Plex with the current Argo URLs.
+You will need to adjust `$PreferencesPath` to match your setup. 
+
+I suggest you run this as a cron job every few minutes, or use a systemd timer.
 
 ### Plex-Argo-DirectoryUpdate-docker.bash
 
