@@ -20,7 +20,7 @@ When you specify a custom connection URL in your Plex Media Server, it will publ
 
 This Published information can be seen for your server by going to `https://plex.tv/api/resources?X-Plex-Token=YOUR_API_TOKEN`
 
-**NOTE:** This API token refreshes each time your Plex Media Server restarts.
+**NOTE:** This API token changes each time your Plex Media Server restarts.
 
 You can obtain your current API Token and see your current customConnections URL in the Plex API with the following:
 
@@ -33,9 +33,14 @@ You can obtain your current API Token and see your current customConnections URL
     (Invoke-WebRequest -UseBasicParsing -Uri ${PlexOnlineToken}).Content
 ```
 
-**Bash** snippet:
+**Docker** snippet:
 ```bash
- cat /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml | grep -oP 'PlexOnlineToken="\K[^"]*
+    grep -oP 'PlexOnlineToken="\K[^"]* '/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
+```
+
+**systemd** snippet:
+```bash
+    grep -oP 'PlexOnlineToken="\K[^"]* '/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
  ```
 
 # Remote Access Tunnel Setup
@@ -51,14 +56,13 @@ I suggest you run this as a cron job every few minutes, or use a systemd timer.
 
 You will need [cloudflared](https://developers.cloudflare.com/argo-tunnel/downloads/) installed and running. You should probably write a `systemd` service file for it.
 
-### Plex-Argo-DirectoryUpdate.bash
+### Plex-Argo-DirectoryUpdate-docker.bash
 
 ```bash
 #!/bin/bash
 # Assumes the cloudflared is running with metrics server
 # Example: cloudflared tunnel --url 'http://localhost:32400' --metrics 'localhost:33400'
 
-#PreferencesPath='/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
 PreferencesPath='/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
 PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
 
@@ -70,7 +74,6 @@ ArgoURL=$(curl -s http://localhost:33400/metrics | grep -oP 'userHostname="https
 
 if [[ $ArgoURL != $PlexAPIcustomConnections ]]; then
     docker container stop plex
-    #systemctl stop plexmediaserver.service
     PreferencesValue="https://${ArgoURL}:443,http://${ArgoURL}:80"
     # Set new Argo URL
     sed -i "s|customConnections=\".*\"|customConnections\=\"${PreferencesValue}\"|" "${PreferencesPath}"
@@ -79,9 +82,38 @@ if [[ $ArgoURL != $PlexAPIcustomConnections ]]; then
     # Disable Plex Remote Access Methods
     sed -i "s|PublishServerOnPlexOnlineKey=\"1\"|PublishServerOnPlexOnlineKey=\"0\"|" "${PreferencesPath}"
     docker container restart plex
-    #systemctl start plexmediaserver.service
 fi
 ```
+
+### Plex-Argo-DirectoryUpdate-systemd.bash
+
+```bash
+#!/bin/bash
+# Assumes the cloudflared is running with metrics server
+# Example: cloudflared tunnel --url 'http://localhost:32400' --metrics 'localhost:33400'
+
+PreferencesPath='/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
+PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
+
+PlexAPIcustomConnections=$(curl -s $PlexOnlineToken | grep -oP 'address="\K[^"]*\.trycloudflare\.com' | head -n1)
+ArgoURL=$(curl -s http://localhost:33400/metrics | grep -oP 'userHostname="https://\K[^"]*\.trycloudflare\.com' | head -n1)
+
+[ -z $ArgoURL ] && exit
+[ -z $PlexAPIcustomConnections ] && exit
+
+if [[ $ArgoURL != $PlexAPIcustomConnections ]]; then
+    systemctl stop plexmediaserver.service
+    PreferencesValue="https://${ArgoURL}:443,http://${ArgoURL}:80"
+    # Set new Argo URL
+    sed -i "s|customConnections=\".*\"|customConnections\=\"${PreferencesValue}\"|" "${PreferencesPath}"
+    # Disable Plex Relay Servers
+    sed -i "s|RelayEnabled=\"1\"|RelayEnabled=\"0\"|" "${PreferencesPath}"
+    # Disable Plex Remote Access Methods
+    sed -i "s|PublishServerOnPlexOnlineKey=\"1\"|PublishServerOnPlexOnlineKey=\"0\"|" "${PreferencesPath}"
+    systemctl start plexmediaserver.service
+fi
+```
+
 
 ## Windows Users
 
