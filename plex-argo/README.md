@@ -37,12 +37,12 @@ You can obtain your current API Token and see your current customConnections URL
 
 Bash snippet (**Docker**):
 ```bash
-    grep -oP 'PlexOnlineToken="\K[^"]* '/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
+    grep -oP 'PlexOnlineToken="\K[^"]*' '/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
 ```
 
 Bash snippet (**systemd**):
 ```bash
-    grep -oP 'PlexOnlineToken="\K[^"]* '/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
+    grep -oP 'PlexOnlineToken="\K[^"]*' '/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
  ```
 
 # Remote Access Tunnel Setup
