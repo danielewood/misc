@@ -1,12 +1,12 @@
 #!/bin/bash
-# Assumes the cloudflared is running with metrics server
+# Assumes cloudflared is running with metrics server on port 33400
 # Example: cloudflared tunnel --url 'http://localhost:32400' --metrics 'localhost:33400'
 
 PreferencesPath='/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
-
 PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
-PlexAPIcustomConnections=$(curl -s $PlexOnlineToken | grep -oP 'address="\K[^"]*\.trycloudflare\.com' | head -n1)
+clientIdentifier=$(grep -oP 'ProcessedMachineIdentifier="\K[^"]*' "${PreferencesPath}")
 
+PlexAPIcustomConnections=$(curl -s $PlexOnlineToken | sed -n "/${clientIdentifier}/{n;p;n;p;}" | grep -oP 'address="\K[^"]*\.trycloudflare\.com' | head -n1)
 ArgoURL=$(curl -s http://localhost:33400/metrics | grep -oP 'userHostname="https://\K[^"]*\.trycloudflare\.com' | head -n1)
 
 [ -z $ArgoURL ] && exit

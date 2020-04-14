@@ -50,10 +50,10 @@ When you import this XML into Task Scheduler, you will need to change the User u
       <Arguments>-WindowStyle Hidden Invoke-Command -ScriptBlock {
   Start-Sleep 10
   While ($true) {
-    $RegistryPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
-    $PlexOnlineToken=(Get-ItemProperty -Path $RegistryPath -Name PlexOnlineToken).PlexOnlineToken
-    $PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token=' + $PlexOnlineToken
-
+    $PreferencesPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
+    $PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token=' + (Get-ItemProperty -Path $PreferencesPath -Name PlexOnlineToken).PlexOnlineToken
+    $clientIdentifier=(Get-ItemProperty -Path $PreferencesPath -Name ProcessedMachineIdentifier).ProcessedMachineIdentifier
+    
     $regex = '([\w-]+\.)+trycloudflare\.com'
 
     $ArgoURL=$null
@@ -64,18 +64,19 @@ When you import this XML into Task Scheduler, you will need to change the User u
       $ArgoURL=(Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:33400/metrics').Content | Select-String -Pattern $regex -AllMatches | % { $_.Matches } | % { $_.Value } | Select-Object -First 1
       [xml]$doc = (New-Object System.Net.WebClient).DownloadString("${PlexOnlineToken}")
       $PlexAPIcustomConnections=($doc.MediaContainer.Device | 
-      Where-Object { $_.Name -eq (Get-ItemProperty -Path $RegistryPath -Name FriendlyName).FriendlyName -or $_.Name -eq $env:computername }).Connection | 
-      where address -Like '*trycloudflare.com' | Select-Object -ExpandProperty address -First 1
+      where clientIdentifier -eq $clientIdentifier).Connection | 
+      where address -Like '*trycloudflare.com' | 
+      Select-Object -ExpandProperty address -First 1
     } Catch {
       $RestError = $_
       Start-Sleep 60
     }
     if ((!$ArgoURL) -or (!$PlexAPIcustomConnections)){continue}
     if ($ArgoURL -ne $PlexAPIcustomConnections){
-      $RegistryValue='https://' + ${ArgoURL} + ':443,http://' + ${ArgoURL} + ':80'
-      Set-ItemProperty -Path ${RegistryPath} -Name customConnections -Value ${RegistryValue}
+      $PreferencesValue='https://' + ${ArgoURL} + ':443,http://' + ${ArgoURL} + ':80'
+      Set-ItemProperty -Path ${PreferencesPath} -Name customConnections -Value ${PreferencesValue}
       $PlexEXE = 'C:\Program Files (x86)\Plex\Plex Media Server\Plex Media Server.exe'
-      Get-Process | ? {$_.path -eq $PlexEXE} | Stop-Process
+      Get-Process | Where-Object {$_.Path -eq $PlexEXE} | Stop-Process
       Start-Process $PlexEXE
     }
     Start-Sleep 300
