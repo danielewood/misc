@@ -28,9 +28,8 @@ You can obtain your current API Token and see your current customConnections URL
 
 **Windows PowerShell** snippet:    
 ```powershell
-    $RegistryPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
-    $PlexOnlineToken=(Get-ItemProperty -Path $RegistryPath -Name PlexOnlineToken).PlexOnlineToken
-    $PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token=' + $PlexOnlineToken
+    $PreferencesPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
+    $PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token=' + (Get-ItemProperty -Path $PreferencesPath -Name PlexOnlineToken).PlexOnlineToken
     Write-Host 'Plex API URL:' ${PlexOnlineToken}
     (Invoke-WebRequest -UseBasicParsing -Uri ${PlexOnlineToken}).Content
 ```
@@ -39,6 +38,7 @@ Bash snippet (**Docker**):
 ```bash
     PreferencesPath='/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
     PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
+    echo "Plex API URL: ${PlexOnlineToken}"
     curl -s $PlexOnlineToken
 ```
 
@@ -46,6 +46,7 @@ Bash snippet (**systemd**):
 ```bash
     PreferencesPath='/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
     PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
+    echo "Plex API URL: ${PlexOnlineToken}"
     curl -s $PlexOnlineToken
  ```
 
@@ -73,13 +74,14 @@ I suggest you run this as a cron job every few minutes, or use a systemd timer.
 
 ```bash
 #!/bin/bash
-# Assumes the cloudflared is running with metrics server
+# Assumes cloudflared is running with metrics server on port 33400
 # Example: cloudflared tunnel --url 'http://localhost:32400' --metrics 'localhost:33400'
 
 PreferencesPath='/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
 PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
+clientIdentifier=$(grep -oP 'ProcessedMachineIdentifier="\K[^"]*' "${PreferencesPath}")
 
-PlexAPIcustomConnections=$(curl -s $PlexOnlineToken | grep -oP 'address="\K[^"]*\.trycloudflare\.com' | head -n1)
+PlexAPIcustomConnections=$(curl -s $PlexOnlineToken | sed -n "/${clientIdentifier}/{n;p;n;p;}" | grep -oP 'address="\K[^"]*\.trycloudflare\.com' | head -n1)
 ArgoURL=$(curl -s http://localhost:33400/metrics | grep -oP 'userHostname="https://\K[^"]*\.trycloudflare\.com' | head -n1)
 
 [ -z $ArgoURL ] && exit
@@ -102,13 +104,14 @@ fi
 
 ```bash
 #!/bin/bash
-# Assumes the cloudflared is running with metrics server
+# Assumes cloudflared is running with metrics server on port 33400
 # Example: cloudflared tunnel --url 'http://localhost:32400' --metrics 'localhost:33400'
 
 PreferencesPath='/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
 PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
+clientIdentifier=$(grep -oP 'ProcessedMachineIdentifier="\K[^"]*' "${PreferencesPath}")
 
-PlexAPIcustomConnections=$(curl -s $PlexOnlineToken | grep -oP 'address="\K[^"]*\.trycloudflare\.com' | head -n1)
+PlexAPIcustomConnections=$(curl -s $PlexOnlineToken | sed -n "/${clientIdentifier}/{n;p;n;p;}" | grep -oP 'address="\K[^"]*\.trycloudflare\.com' | head -n1)
 ArgoURL=$(curl -s http://localhost:33400/metrics | grep -oP 'userHostname="https://\K[^"]*\.trycloudflare\.com' | head -n1)
 
 [ -z $ArgoURL ] && exit
@@ -135,11 +138,11 @@ The following `PowerShell` snippet will Configure your Plex Media Server for Rem
 We are making sure that Plex Remote Access is disabled as we do not want to proxy anything through the Plex Servers and want it all done through Cloudflare.
 
 ```powershell
-    $RegistryPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
+    $PreferencesPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
     # Disable "Settings/Remote Access"
-    Set-ItemProperty -Path ${RegistryPath} -Name PublishServerOnPlexOnlineKey -Value 0
+    Set-ItemProperty -Path ${PreferencesPath} -Name PublishServerOnPlexOnlineKey -Value 0
     # Disable "Settings/Network/Enable Relay"
-    Set-ItemProperty -Path ${RegistryPath} -Name RelayEnabled -Value 0 
+    Set-ItemProperty -Path ${PreferencesPath} -Name RelayEnabled -Value 0 
 ```
 
 ## Scheduled Tasks
@@ -167,9 +170,9 @@ The following PowerShell script is embedded within the Scheduled Task, it will a
 ```powershell
   Start-Sleep 10
   While ($true) {
-    $RegistryPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
-    $PlexOnlineToken=(Get-ItemProperty -Path $RegistryPath -Name PlexOnlineToken).PlexOnlineToken
-    $PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token=' + $PlexOnlineToken
+    $PreferencesPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
+    $PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token=' + (Get-ItemProperty -Path $PreferencesPath -Name PlexOnlineToken).PlexOnlineToken
+    $clientIdentifier=(Get-ItemProperty -Path $PreferencesPath -Name ProcessedMachineIdentifier).ProcessedMachineIdentifier
 
     $regex = '([\w-]+\.)+trycloudflare\.com'
 
@@ -181,7 +184,7 @@ The following PowerShell script is embedded within the Scheduled Task, it will a
       $ArgoURL=(Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:33400/metrics').Content | Select-String -Pattern $regex -AllMatches | % { $_.Matches } | % { $_.Value } | Select-Object -First 1
       [xml]$doc = (New-Object System.Net.WebClient).DownloadString("${PlexOnlineToken}")
       $PlexAPIcustomConnections=($doc.MediaContainer.Device | 
-      Where-Object { $_.Name -eq (Get-ItemProperty -Path $RegistryPath -Name FriendlyName).FriendlyName -or $_.Name -eq $env:computername }).Connection | 
+      Where clientIdentifier -eq $clientIdentifier).Connection | 
       where address -Like '*trycloudflare.com' | Select-Object -ExpandProperty address -First 1
     } Catch {
       $RestError = $_
@@ -189,10 +192,10 @@ The following PowerShell script is embedded within the Scheduled Task, it will a
     }
     if ((!$ArgoURL) -or (!$PlexAPIcustomConnections)){continue}
     if ($ArgoURL -ne $PlexAPIcustomConnections){
-      $RegistryValue='https://' + ${ArgoURL} + ':443,http://' + ${ArgoURL} + ':80'
-      Set-ItemProperty -Path ${RegistryPath} -Name customConnections -Value ${RegistryValue}
+      $PreferencesValue='https://' + ${ArgoURL} + ':443,http://' + ${ArgoURL} + ':80'
+      Set-ItemProperty -Path ${PreferencesPath} -Name customConnections -Value ${PreferencesValue}
       $PlexEXE = 'C:\Program Files (x86)\Plex\Plex Media Server\Plex Media Server.exe'
-      Get-Process | ? {$_.path -eq $PlexEXE} | Stop-Process
+      Get-Process | Where-Object {$_.Path -eq $PlexEXE} | Stop-Process
       Start-Process $PlexEXE
     }
     Start-Sleep 300
