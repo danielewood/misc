@@ -78,7 +78,7 @@ When you import this XML into Task Scheduler, you will need to change the User u
       Get-Process | ? {$_.path -eq $PlexEXE} | Stop-Process
       Start-Process $PlexEXE
     }
-	Start-Sleep 300
+    Start-Sleep 300
   }
 }</Arguments>
     </Exec>
