@@ -26,29 +26,32 @@ This Published information can be seen for your server by going to `https://plex
 
 You can obtain your current API Token and see your current customConnections URL in the Plex API with the following:
 
-**Windows PowerShell** snippet:    
+**Windows PowerShell** snippet:
+
 ```powershell
-    $PreferencesPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
-    $PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token=' + (Get-ItemProperty -Path $PreferencesPath -Name PlexOnlineToken).PlexOnlineToken
-    Write-Host 'Plex API URL:' ${PlexOnlineToken}
-    (Invoke-WebRequest -UseBasicParsing -Uri ${PlexOnlineToken}).Content
+$PreferencesPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
+$PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token=' + (Get-ItemProperty -Path $PreferencesPath -Name PlexOnlineToken).PlexOnlineToken
+Write-Host 'Plex API URL:' ${PlexOnlineToken}
+(Invoke-WebRequest -UseBasicParsing -Uri ${PlexOnlineToken}).Content
 ```
 
 Bash snippet (**Docker**):
+
 ```bash
-    PreferencesPath='/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
-    PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
-    echo "Plex API URL: ${PlexOnlineToken}"
-    curl -s $PlexOnlineToken
+PreferencesPath='/home/ubuntu/plex/config/Library/Application Support/Plex Media Server/Preferences.xml'
+PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
+echo "Plex API URL: ${PlexOnlineToken}"
+curl -s $PlexOnlineToken
 ```
 
 Bash snippet (**systemd**):
+
 ```bash
-    PreferencesPath='/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
-    PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
-    echo "Plex API URL: ${PlexOnlineToken}"
-    curl -s $PlexOnlineToken
- ```
+PreferencesPath='/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Preferences.xml'
+PlexOnlineToken='https://plex.tv/api/resources?X-Plex-Token='$(grep -oP 'PlexOnlineToken="\K[^"]*' "${PreferencesPath}")
+echo "Plex API URL: ${PlexOnlineToken}"
+curl -s $PlexOnlineToken
+```
 
 # Remote Access Tunnel Setup
 
@@ -57,12 +60,12 @@ Bash snippet (**systemd**):
 You will need [cloudflared](https://developers.cloudflare.com/argo-tunnel/downloads/) installed and running. I recommend installing it as a service.
 
 ```bash
-    sudo mkdir -p /etc/cloudflared
-    sudo bash -c "cat <<'EOF'>/etc/cloudflared/config.yml
-    url: http://localhost:32400
-    metrics: localhost:33400
-    EOF"
-    sudo cloudflared service install
+sudo mkdir -p /etc/cloudflared
+sudo bash -c "cat <<'EOF'>/etc/cloudflared/config.yml
+url: http://localhost:32400
+metrics: localhost:33400
+EOF"
+sudo cloudflared service install
 ```
 
 The following bash script will update a docker container running Plex with the current Argo URLs.
@@ -138,11 +141,11 @@ The following `PowerShell` snippet will Configure your Plex Media Server for Rem
 We are making sure that Plex Remote Access is disabled as we do not want to proxy anything through the Plex Servers and want it all done through Cloudflare.
 
 ```powershell
-    $PreferencesPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
-    # Disable "Settings/Remote Access"
-    Set-ItemProperty -Path ${PreferencesPath} -Name PublishServerOnPlexOnlineKey -Value 0
-    # Disable "Settings/Network/Enable Relay"
-    Set-ItemProperty -Path ${PreferencesPath} -Name RelayEnabled -Value 0 
+$PreferencesPath='Registry::HKEY_CURRENT_USER\SOFTWARE\Plex, Inc.\Plex Media Server'
+# Disable "Settings/Remote Access"
+Set-ItemProperty -Path ${PreferencesPath} -Name PublishServerOnPlexOnlineKey -Value 0
+# Disable "Settings/Network/Enable Relay"
+Set-ItemProperty -Path ${PreferencesPath} -Name RelayEnabled -Value 0 
 ```
 
 ## Scheduled Tasks
