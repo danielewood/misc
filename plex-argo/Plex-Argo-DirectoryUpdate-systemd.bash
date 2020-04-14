@@ -21,5 +21,5 @@ if [[ $ArgoURL != $PlexAPIcustomConnections ]]; then
     sed -i "s|RelayEnabled=\"1\"|RelayEnabled=\"0\"|" "${PreferencesPath}"
     # Disable Plex Remote Access Methods
     sed -i "s|PublishServerOnPlexOnlineKey=\"1\"|PublishServerOnPlexOnlineKey=\"0\"|" "${PreferencesPath}"
-    systemctl start plexmediaserver.service
+    systemctl restart plexmediaserver.service
 fi
