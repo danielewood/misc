@@ -175,7 +175,10 @@ The following PowerShell script is embedded within the Scheduled Task, it will a
 
     Try {
       $ArgoURL=(Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:33400/metrics').Content | Select-String -Pattern $regex -AllMatches | % { $_.Matches } | % { $_.Value } | Select-Object -First 1
-      $PlexAPIcustomConnections=(Invoke-WebRequest -UseBasicParsing -Uri ${PlexOnlineToken}).Content | Select-String -Pattern $regex -AllMatches | % { $_.Matches } | % { $_.Value } | Select-Object -First 1
+      [xml]$doc = (New-Object System.Net.WebClient).DownloadString("${PlexOnlineToken}")
+      $PlexAPIcustomConnections=($doc.MediaContainer.Device | 
+      Where-Object { $_.Name -eq (Get-ItemProperty -Path $RegistryPath -Name FriendlyName).FriendlyName -or $_.Name -eq $env:computername }).Connection | 
+      where address -Like '*trycloudflare.com' | Select-Object -ExpandProperty address -First 1
     } Catch {
       $RestError = $_
       Start-Sleep 60
