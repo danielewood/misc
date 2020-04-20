@@ -9,7 +9,7 @@ vouch:
 
 # if you do not have a whitelist, any of the above domains will be allowed if they are on the GCP API key.
 # alternatively, remove the whitelist and set preferredDomain to be YOUR.DOMAIN and remove gmail.com from the above list to allow anyone with @YOUR.DOMAIN google account.
-whiteList:
+  whiteList:
   - username1@gmail.com
   - username2@gmail.com
   - john@YOUR.DOMAIN

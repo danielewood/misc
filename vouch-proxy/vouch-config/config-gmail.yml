@@ -5,8 +5,8 @@ vouch:
   domains:
   - gmail.com
 
-# if you do not have a whitelist, any gmail account will be allowed
-whiteList:
+  # if you do not have a whitelist, any gmail account will be allowed
+  whiteList:
   - username1@gmail.com
   - username2@gmail.com
 
