@@ -1,6 +1,7 @@
 # vouch config
 # bare minimum to get vouch running with gmail
 
+# domains must reference the each root domain in the callback URL section
 vouch:
   domains:
   - YOUR.DOMAIN

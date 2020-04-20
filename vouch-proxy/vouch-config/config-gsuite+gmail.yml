@@ -1,19 +1,19 @@
 # vouch config
 # bare minimum to get vouch running with gsuite+gmail
 
+# domains must reference the each root domain in the callback URL section
 vouch:
   domains:
   - YOUR.DOMAIN
-  - YOUROTHER.DOMAIN
-  - gmail.com
 
-# if you do not have a whitelist, any of the above domains will be allowed if they are on the GCP API key.
-# alternatively, remove the whitelist and set preferredDomain to be YOUR.DOMAIN and remove gmail.com from the above list to allow anyone with @YOUR.DOMAIN google account.
+# if you do not have a whitelist, any of the above domains will be allowed if they are on the GCP API key or it is set to external.
+# alternatively, remove the whitelist to allow anyone with an account @YOUR.DOMAIN to access.
   whiteList:
   - username1@gmail.com
   - username2@gmail.com
   - john@YOUR.DOMAIN
   - sarah@YOUROTHER.DOMAIN
+  - jim@SOMEONE_ELSES_GSUITE.DOMAIN
 
 oauth:
   provider: google
