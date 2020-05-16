@@ -12,7 +12,7 @@ sudo bash -c 'echo "include /usr/local/lib" >> /etc/ld.so.conf'
 sudo ldconfig
 ```
 
-# Run
+## Run
 ```bash
 /usr/local/bin/openssl
 ```
